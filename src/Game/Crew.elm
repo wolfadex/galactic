@@ -101,7 +101,7 @@ modifyMoral amount actionAlignment crew =
         modifier =
             alignmentModifier actionAlignment crew.alignment
     in
-    { crew | morale = clamp 0 100 (floor (modifier * toFloat amount) + crew.morale) }
+    { crew | morale = min 100 (floor (modifier * toFloat amount) + crew.morale) }
 
 
 alignmentModifier : Alignment -> Alignment -> Float

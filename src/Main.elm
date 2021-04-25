@@ -28,6 +28,7 @@ main =
 type Model
     = Initializing
     | Playing Seed Game
+    | GameOver Seed String
 
 
 type alias Game =
@@ -133,12 +134,50 @@ update msg model =
                         |> Maybe.map (\(Action { apply }) -> apply game seed)
                         |> Maybe.withDefault ( game, seed )
             in
-            ( Playing nextSeed nextGame
-            , Cmd.none
-            )
+            if List.isEmpty nextGame.crew then
+                ( GameOver seed "The crew is all dead, thus ends your journey."
+                , Cmd.none
+                )
+
+            else
+                ( checkMorale nextSeed nextGame
+                , Cmd.none
+                )
 
         _ ->
             ( model, Cmd.none )
+
+
+checkMorale : Seed -> Game -> Model
+checkMorale seed game =
+    let
+        ( mutinousCrew, alliedCrew ) =
+            List.partition
+                (\crew -> crew.morale < 0)
+                game.crew
+
+        crewToKill =
+            List.length mutinousCrew // 4
+    in
+    if crewToKill * 2 >= List.length alliedCrew then
+        GameOver seed "The crew is abhoard with your actions and mutinies, overthrowing you."
+
+    else
+        let
+            ( nextGame, nextSeed ) =
+                Random.step
+                    (Random.map
+                        (\shuffledCrew ->
+                            { game
+                                | resultOfAction = game.resultOfAction ++ "\n\nDue to your actions some of the crew attempts to mutiny but fails. You end up losing " ++ String.fromInt crewToKill ++ " allied crew memebrs plus those who mutinied."
+                                , crew = List.drop crewToKill shuffledCrew
+                            }
+                        )
+                        (Random.List.shuffle alliedCrew)
+                    )
+                    seed
+        in
+        Playing nextSeed nextGame
 
 
 initialCrewAlignments : ( ( Float, Alignment ), List ( Float, Alignment ) )
@@ -193,6 +232,9 @@ viewBody model =
 
         Playing _ game ->
             viewGame game
+
+        GameOver _ reason ->
+            text reason
 
 
 viewGame : Game -> Element Msg
@@ -568,7 +610,9 @@ defaultDeck =
                                         discard
                                             { game
                                                 | resultOfAction = "While restocking your ship the Korgallians see the green sphere relic and react in rage, attacking your crew. You manage to make it out of there but lose 2 crew members. You later learn that this device was a weapon built to destroy the Korgallians and they thought you were attempting to kill them."
-                                                , crew = List.drop 2 shuffledCrew
+                                                , crew =
+                                                    List.drop 2 shuffledCrew
+                                                        |> List.map (Crew.modifyMoral -3 ChaoticEvil)
                                             }
                                     )
                                     (Random.List.shuffle game.crew)
