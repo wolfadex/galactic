@@ -1,4 +1,4 @@
-module Main exposing (main)
+module Main exposing (Flags, Model, Msg, main)
 
 import Browser exposing (Document)
 import Browser.Events
@@ -78,6 +78,7 @@ type alias Flags =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
+        windowSize : WindowSize
         windowSize =
             case Json.Decode.decodeValue decodeFlags flags of
                 Ok val ->
@@ -193,6 +194,7 @@ checkMorale seed windowSize game =
                 (\crew -> crew.morale < 0)
                 game.crew
 
+        crewToKill : Int
         crewToKill =
             List.length mutinousCrew // 4
     in
@@ -541,6 +543,7 @@ defaultDeck =
         , description =
             \{ crew } ->
                 let
+                    crewCount : Int
                     crewCount =
                         List.length crew
                 in
@@ -558,6 +561,7 @@ defaultDeck =
                 , apply =
                     \game seed ->
                         let
+                            crewSize : Float
                             crewSize =
                                 toFloat (List.length game.crew)
 
@@ -584,6 +588,7 @@ defaultDeck =
                 , apply =
                     \game seed ->
                         let
+                            crewSize : Float
                             crewSize =
                                 toFloat (List.length game.crew)
 
@@ -610,6 +615,7 @@ defaultDeck =
                 , apply =
                     \game seed ->
                         let
+                            crewSize : Float
                             crewSize =
                                 toFloat (List.length game.crew)
 
@@ -679,6 +685,7 @@ defaultDeck =
                 , apply =
                     \game seed ->
                         let
+                            hasGreenSphere : Bool
                             hasGreenSphere =
                                 List.Extra.find
                                     (\item ->
@@ -869,6 +876,7 @@ pirateAlignments =
 killPercentCrew : { min : Float, max : Float } -> List Crew -> Seed -> ( List Crew, Seed )
 killPercentCrew amount crew seed =
     let
+        crewSize : Float
         crewSize =
             toFloat (List.length crew)
     in
@@ -876,6 +884,7 @@ killPercentCrew amount crew seed =
         (Random.map2
             (\percentToKill shuffledCrew ->
                 let
+                    numberToKill : Int
                     numberToKill =
                         floor (percentToKill * crewSize)
                 in

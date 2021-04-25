@@ -2,5 +2,8 @@
 elm-stuff
 elm.js
 
+# JS
+node_modules
+
 # Mac
 .DS_Store

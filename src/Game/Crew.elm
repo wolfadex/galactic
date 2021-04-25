@@ -1,10 +1,8 @@
 module Game.Crew exposing
     ( Alignment(..)
     , Crew
-    , alignmentToString
     , modifyMoral
     , moraleMaximum
-    , moraleMinimum
     , random
     )
 
@@ -28,42 +26,6 @@ type Alignment
     | LawfulEvil
     | NeutralEvil
     | ChaoticEvil
-
-
-alignmentToString : Alignment -> String
-alignmentToString alignment =
-    case alignment of
-        LawfulGood ->
-            "LawfulGood"
-
-        NeutralGood ->
-            "NeutralGood"
-
-        ChaoticGood ->
-            "ChaoticGood"
-
-        LawfulNeutral ->
-            "LawfulNeutral"
-
-        TrueNeutral ->
-            "TrueNeutral"
-
-        ChaoticNeutral ->
-            "ChaoticNeutral"
-
-        LawfulEvil ->
-            "LawfulEvil"
-
-        NeutralEvil ->
-            "NeutralEvil"
-
-        ChaoticEvil ->
-            "ChaoticEvil"
-
-
-moraleMinimum : Int
-moraleMinimum =
-    0
 
 
 moraleMaximum : Int
@@ -98,6 +60,7 @@ random { moraleMin, moraleMax, alignmentsWeighted } =
 modifyMoral : Int -> Alignment -> Crew -> Crew
 modifyMoral amount actionAlignment crew =
     let
+        modifier : Float
         modifier =
             alignmentModifier actionAlignment crew.alignment
     in

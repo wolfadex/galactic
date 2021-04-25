@@ -1,0 +1,28 @@
+{
+  "name": "galactic",
+  "version": "1.0.0",
+  "description": "A game about exploring space",
+  "scripts": {
+    "build": "elm-review && elm make src/Main.elm --optimize --output=elm.js",
+    "dev": "elm-live src/Main.elm --start-page=index.html -- --output=elm.js",
+    "review": "elm-review --fix-all --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wolfadex/galactic.git"
+  },
+  "author": "Wolfgang Schuster",
+  "bugs": {
+    "url": "https://github.com/wolfadex/galactic/issues"
+  },
+  "homepage": "https://github.com/wolfadex/galactic#readme",
+  "volta": {
+    "node": "16.0.0"
+  },
+  "devDependencies": {
+    "elm": "0.19.1-5",
+    "elm-format": "^0.8.5",
+    "elm-live": "^4.0.2",
+    "elm-review": "^2.5.0"
+  }
+}

@@ -1,4 +1,4 @@
-module Gui.Input exposing (..)
+module Gui.Input exposing (button)
 
 import Element exposing (..)
 import Element.Background as Background
