@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A game about exploring space",
   "scripts": {
-    "build": "elm-review && elm make src/Main.elm --optimize --output=elm.js",
+    "build": "elm-review && elm make src/Main.elm --optimize --output=build/elm.js && cp index.html build/index.html",
     "dev": "elm-live src/Main.elm --start-page=index.html -- --output=elm.js",
     "review": "elm-review --fix-all --watch"
   },
