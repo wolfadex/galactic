@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Main</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       body {
         padding: 0;
@@ -14,7 +15,9 @@
   <body>
     <script src="elm.js"></script>
     <script>
-      Elm.Main.init();
+      Elm.Main.init({
+        flags: { width: window.innerWidth, height: window.innerHeight },
+      });
     </script>
   </body>
 </html>

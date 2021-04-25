@@ -1,17 +1,19 @@
 module Main exposing (main)
 
 import Browser exposing (Document)
+import Browser.Events
 import Element exposing (..)
 import Element.Border as Border
 import Game.Crew as Crew exposing (Alignment(..), Crew)
 import Gui.Color
 import Gui.Input as Input
+import Json.Decode exposing (Decoder, Value)
 import List.Extra
 import Random exposing (Seed)
 import Random.List
 
 
-main : Program () Model Msg
+main : Program Flags Model Msg
 main =
     Browser.document
         { init = init
@@ -26,9 +28,13 @@ main =
 
 
 type Model
-    = Initializing
-    | Playing Seed Game
-    | GameOver Seed String
+    = Initializing WindowSize
+    | Playing Seed WindowSize Game
+    | GameOver Seed WindowSize String
+
+
+type alias WindowSize =
+    ( Int, Int )
 
 
 type alias Game =
@@ -61,21 +67,41 @@ type Action
         }
 
 
+type alias Flags =
+    Value
+
+
 
 ---- INIT ----
 
 
-init : () -> ( Model, Cmd Msg )
-init () =
-    ( Initializing
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    let
+        windowSize =
+            case Json.Decode.decodeValue decodeFlags flags of
+                Ok val ->
+                    val
+
+                Err _ ->
+                    ( 0, 0 )
+    in
+    ( Initializing windowSize
     , Random.independentSeed
         |> Random.generate Initialize
     )
 
 
+decodeFlags : Decoder ( Int, Int )
+decodeFlags =
+    Json.Decode.map2 Tuple.pair
+        (Json.Decode.field "width" Json.Decode.int)
+        (Json.Decode.field "height" Json.Decode.int)
+
+
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.none
+    Browser.Events.onResize (\w h -> WindowResized ( w, h ))
 
 
 
@@ -85,12 +111,22 @@ subscriptions _ =
 type Msg
     = Initialize Seed
     | PlayCard Int
+    | WindowResized WindowSize
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
-        ( Initialize seed, Initializing ) ->
+        ( WindowResized windowSize, Initializing _ ) ->
+            ( Initializing windowSize, Cmd.none )
+
+        ( WindowResized windowSize, Playing seed _ game ) ->
+            ( Playing seed windowSize game, Cmd.none )
+
+        ( WindowResized windowSize, GameOver seed _ reason ) ->
+            ( GameOver seed windowSize reason, Cmd.none )
+
+        ( Initialize seed, Initializing windowSize ) ->
             let
                 ( ( deck, crew ), nextSeed ) =
                     Random.step
@@ -109,6 +145,7 @@ update msg model =
                         seed
             in
             ( Playing nextSeed
+                windowSize
                 { deck =
                     firstCard
                         :: deck
@@ -126,7 +163,7 @@ update msg model =
             , Cmd.none
             )
 
-        ( PlayCard index, Playing seed game ) ->
+        ( PlayCard index, Playing seed windowSize game ) ->
             let
                 ( nextGame, nextSeed ) =
                     List.head game.deck
@@ -135,12 +172,12 @@ update msg model =
                         |> Maybe.withDefault ( game, seed )
             in
             if List.isEmpty nextGame.crew then
-                ( GameOver seed "The crew is all dead, thus ends your journey."
+                ( GameOver seed windowSize "The crew is all dead, thus ends your journey."
                 , Cmd.none
                 )
 
             else
-                ( checkMorale nextSeed nextGame
+                ( checkMorale nextSeed windowSize nextGame
                 , Cmd.none
                 )
 
@@ -148,8 +185,8 @@ update msg model =
             ( model, Cmd.none )
 
 
-checkMorale : Seed -> Game -> Model
-checkMorale seed game =
+checkMorale : Seed -> WindowSize -> Game -> Model
+checkMorale seed windowSize game =
     let
         ( mutinousCrew, alliedCrew ) =
             List.partition
@@ -160,10 +197,10 @@ checkMorale seed game =
             List.length mutinousCrew // 4
     in
     if crewToKill * 2 >= List.length alliedCrew then
-        GameOver seed "The crew is abhoard with your actions and mutinies, overthrowing you."
+        GameOver seed windowSize "The crew is abhoard with your actions and mutinies, overthrowing you."
 
     else if crewToKill == 0 then
-        Playing seed game
+        Playing seed windowSize game
 
     else
         let
@@ -180,7 +217,7 @@ checkMorale seed game =
                     )
                     seed
         in
-        Playing nextSeed nextGame
+        Playing nextSeed windowSize nextGame
 
 
 initialCrewAlignments : ( ( Float, Alignment ), List ( Float, Alignment ) )
@@ -230,14 +267,29 @@ view model =
 viewBody : Model -> Element Msg
 viewBody model =
     case model of
-        Initializing ->
-            text "Initializing..."
+        Initializing windowSize ->
+            validateWindow windowSize (text "Initializing...")
 
-        Playing _ game ->
-            viewGame game
+        Playing _ windowSize game ->
+            validateWindow windowSize (viewGame game)
 
-        GameOver _ reason ->
-            text reason
+        GameOver _ windowSize reason ->
+            validateWindow windowSize (text reason)
+
+
+validateWindow : WindowSize -> Element msg -> Element msg
+validateWindow windowSize content =
+    let
+        ( width, height ) =
+            windowSize
+    in
+    if width < height && width < 1024 then
+        paragraph
+            []
+            [ text "This game is best played on a screen at least 1024px in width. If your're on a phone, maybe try rotating it horizontal" ]
+
+    else
+        content
 
 
 viewGame : Game -> Element Msg
@@ -383,18 +435,21 @@ moraleToString morale =
 
 viewDeck : Game -> Element Msg
 viewDeck game =
-    column
-        [ width fill, alignTop ]
-        [ paragraph
-            [ padding 16 ]
-            [ text game.resultOfAction ]
-        , case game.deck of
-            [] ->
-                text "deck is empty"
+    el
+        [ width fill, alignTop, height fill, clipY ]
+        (column
+            [ width fill, alignTop, scrollbarY ]
+            [ paragraph
+                [ padding 16 ]
+                [ text game.resultOfAction ]
+            , case game.deck of
+                [] ->
+                    text "deck is empty"
 
-            card :: _ ->
-                viewCard game card
-        ]
+                card :: _ ->
+                    viewCard game card
+            ]
+        )
 
 
 viewCard : Game -> Card -> Element Msg
