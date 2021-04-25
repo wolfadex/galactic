@@ -4,15 +4,12 @@ module Game.Cards exposing
     , placeholderCard
     )
 
-import Game.Crew as Crew exposing (Alignment(..))
-import Game.Data exposing (Action(..), Card(..))
-import List.Extra
-import Random
-import Random.List
+import Game.Crew as Crew exposing (Alignment(..), Crew)
+import Game.Data exposing (Action(..), Card(..), Game)
 import Game.Item exposing (Item(..))
-import Game.Data exposing (Game)
+import List.Extra
 import Random exposing (Seed)
-import Game.Crew exposing (Crew)
+import Random.List
 
 
 placeholderCard : Card
@@ -156,6 +153,31 @@ defaultDeck =
                             |> addCard pirateBattle
                         , seed
                         )
+                }
+            , Action
+                { label = "Attempt to Flee"
+                , apply =
+                    \game seed ->
+                        Random.step
+                            (Random.andThen
+                                (\escapeUnharmed ->
+                                    if escapeUnharmed then
+                                        Random.constant (discard { game | resultOfAction = "You turn and flee. While the ship takes some minor damage the crew remains safe." })
+
+                                    else
+                                        Random.map
+                                            (\shuffledCrew ->
+                                                discard
+                                                    { game
+                                                        | resultOfAction = "You turn to flee and the pirates give change. You escape but 4 crew die in the battle."
+                                                        , crew = List.drop 4 shuffledCrew
+                                                    }
+                                            )
+                                            (Random.List.shuffle game.crew)
+                                )
+                                (Random.weighted ( 80, True ) [ ( 20, False ) ])
+                            )
+                            seed
                 }
             ]
         }
