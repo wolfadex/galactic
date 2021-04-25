@@ -1,10 +1,11 @@
 module Game.Crew exposing
     ( Alignment(..)
     , Crew
+    , alignmentToString
     , modifyMoral
     , moraleMaximum
     , moraleMinimum
-    , random, alignmentToString
+    , random
     )
 
 import Random
@@ -86,7 +87,10 @@ random { moraleMin, moraleMax, alignmentsWeighted } =
             , alignment = alignment
             }
         )
-        (Random.uniform firstName restNames)
+        (Random.weighted ( 5, 1 ) [ ( 25, 2 ), ( 40, 3 ), ( 25, 4 ), ( 5, 5 ) ]
+            |> Random.andThen (\numNames -> Random.list numNames (Random.uniform firstName restNames))
+            |> Random.map (String.join " ")
+        )
         (Random.int moraleMin moraleMax)
         (Random.weighted firstAlignment restAlignments)
 
@@ -97,7 +101,7 @@ modifyMoral amount actionAlignment crew =
         modifier =
             alignmentModifier actionAlignment crew.alignment
     in
-    { crew | morale = bounded 0 100 (floor (modifier * toFloat amount) + crew.morale) }
+    { crew | morale = clamp 0 100 (floor (modifier * toFloat amount) + crew.morale) }
 
 
 alignmentModifier : Alignment -> Alignment -> Float
@@ -356,11 +360,6 @@ alignmentModifier alignment1 alignment2 =
             2
 
 
-bounded : Int -> Int -> Int -> Int
-bounded minimum maximum val =
-    max minimum (min maximum val)
-
-
 
 ---- DATA ----
 
@@ -378,5 +377,31 @@ personNames =
       , "Flynn"
       , "Ash"
       , "Sean"
+      , "Lance"
+      , "Samantha"
+      , "Raechel"
+      , "Lisa"
+      , "Kelby"
+      , "Vaughn"
+      , "Clarence"
+      , "Joanna"
+      , "Dorothy"
+      , "Isaiah"
+      , "Ibram"
+      , "Elizabeth"
+      , "Liz"
+      , "Jeroen"
+      , "Richard"
+      , "Robert"
+      , "Thomas"
+      , "William"
+      , "Sharon"
+      , "Julian"
+      , "James"
+      , "Megan"
+      , "Alex"
+      , "Alexander"
+      , "Shane"
+      , "Ashley"
       ]
     )

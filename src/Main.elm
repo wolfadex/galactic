@@ -4,6 +4,7 @@ import Browser exposing (Document)
 import Element exposing (..)
 import Element.Border as Border
 import Game.Crew as Crew exposing (Alignment(..), Crew)
+import Gui.Color
 import Gui.Input as Input
 import List.Extra
 import Random exposing (Seed)
@@ -34,8 +35,14 @@ type alias Game =
     , discardDeck : List Card
     , resultOfAction : String
     , crew : List Crew
-    , viewCrew : Bool
+    , rareItems : List Item
     }
+
+
+type Item
+    = BlueCube
+    | RedPyramid
+    | GreenSphere
 
 
 type Card
@@ -77,8 +84,6 @@ subscriptions _ =
 type Msg
     = Initialize Seed
     | PlayCard Int
-    | ShowCrew
-    | HideCrew
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -90,7 +95,8 @@ update msg model =
                     Random.step
                         (Random.map2 Tuple.pair
                             (Random.List.shuffle defaultDeck)
-                            (Random.list 100
+                            -- 428 is the crew size of the Enterprise
+                            (Random.list 428
                                 (Crew.random
                                     { moraleMin = 80
                                     , moraleMax = Crew.moraleMaximum
@@ -114,7 +120,7 @@ update msg model =
                 , discardDeck = []
                 , resultOfAction = "You board your ship"
                 , crew = crew
-                , viewCrew = True
+                , rareItems = []
                 }
             , Cmd.none
             )
@@ -130,12 +136,6 @@ update msg model =
             ( Playing nextSeed nextGame
             , Cmd.none
             )
-
-        ( ShowCrew, Playing seed game ) ->
-            ( Playing seed { game | viewCrew = True }, Cmd.none )
-
-        ( HideCrew, Playing seed game ) ->
-            ( Playing seed { game | viewCrew = False }, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
@@ -163,7 +163,25 @@ initialCrewAlignments =
 view : Model -> Document Msg
 view model =
     { title = "Galactic"
-    , body = [ layout [ width fill, height fill, padding 16 ] (viewBody model) ]
+    , body =
+        [ layoutWith
+            { options =
+                [ focusStyle
+                    { borderColor = Nothing
+                    , backgroundColor = Just Gui.Color.focused
+                    , shadow =
+                        Just
+                            { offset = ( 0, 0 )
+                            , color = Gui.Color.focused
+                            , size = 2
+                            , blur = 6
+                            }
+                    }
+                ]
+            }
+            [ width fill, height fill, padding 16 ]
+            (viewBody model)
+        ]
     }
 
 
@@ -202,26 +220,7 @@ viewCrew state =
         ]
         [ row
             [ alignTop, spacing 16 ]
-            [ text ("Crew count: " ++ String.fromInt (List.length state.crew))
-            , Input.button
-                []
-                { label =
-                    text <|
-                        if state.viewCrew then
-                            "Hide Crew"
-
-                        else
-                            "Show Crew"
-                , onPress =
-                    Just
-                        (if state.viewCrew then
-                            HideCrew
-
-                         else
-                            ShowCrew
-                        )
-                }
-            ]
+            []
         , column
             [ width fill
             , height fill
@@ -238,20 +237,17 @@ viewCrew state =
                     , right = 0
                     }
                 ]
-                (text "Crew")
-            , if state.viewCrew then
-                state.crew
-                    |> List.map viewCrewMember
-                    |> column
-                        [ width fill
-                        , spacing 8
-                        , padding 8
-                        , height fill
-                        , scrollbarY
-                        ]
-
-              else
-                none
+                (text ("Crew: " ++ String.fromInt (List.length state.crew)))
+            , state.crew
+                |> List.sortBy .name
+                |> List.map viewCrewMember
+                |> column
+                    [ width fill
+                    , spacing 8
+                    , padding 8
+                    , height fill
+                    , scrollbarY
+                    ]
             ]
         ]
 
@@ -261,6 +257,7 @@ viewCrewMember crew =
     el
         [ width fill
         , Border.solid
+        , Border.color Gui.Color.light
         , Border.rounded 5
         , Border.widthEach
             { top = 2
@@ -268,13 +265,13 @@ viewCrewMember crew =
             , left = 0
             , right = 2
             }
-        , Border.color (rgb 0.7 0.7 0.7)
         ]
         (column
             [ spacing 8
             , padding 8
             , width fill
             , Border.solid
+            , Border.color Gui.Color.dark
             , Border.rounded 5
             , Border.widthEach
                 { top = 0
@@ -325,20 +322,40 @@ viewDeck game =
 
 viewCard : Game -> Card -> Element Msg
 viewCard game (Card card) =
-    column
-        [ spacing 16
-        , padding 16
+    el
+        [ width fill
         , Border.solid
-        , Border.width 1
-        , width fill
+        , Border.color Gui.Color.light
+        , Border.rounded 5
+        , Border.widthEach
+            { top = 2
+            , bottom = 0
+            , left = 0
+            , right = 2
+            }
         ]
-        [ paragraph
-            []
-            [ text (card.description game) ]
-        , card.actions
-            |> List.indexedMap viewAction
-            |> row [ spacing 16 ]
-        ]
+        (column
+            [ spacing 16
+            , padding 16
+            , Border.solid
+            , Border.color Gui.Color.dark
+            , Border.rounded 5
+            , Border.widthEach
+                { top = 0
+                , bottom = 2
+                , left = 2
+                , right = 0
+                }
+            , width fill
+            ]
+            [ paragraph
+                []
+                [ text (card.description game) ]
+            , card.actions
+                |> List.indexedMap viewAction
+                |> wrappedRow [ spacing 16 ]
+            ]
+        )
 
 
 viewAction : Int -> Action -> Element Msg
@@ -498,7 +515,155 @@ defaultDeck =
                 }
             ]
         }
+    , Card
+        { label = "Strange Planet"
+        , description = \_ -> "After traveling for some time you come across a lush, habitible planet."
+        , actions =
+            [ Action
+                { label = "Pass it By"
+                , apply =
+                    \game seed ->
+                        ( discard { game | resultOfAction = "You continue on your journey, ignoring the planet." }
+                        , seed
+                        )
+                }
+            , Action
+                { label = "Explore The Surface"
+                , apply =
+                    \game seed ->
+                        ( discard { game | resultOfAction = "You send a small group downw to the planet." }
+                            |> addCard exploreStrangePlanet
+                        , seed
+                        )
+                }
+            ]
+        }
+    , Card
+        { label = "Planet Korgall"
+        , description = \_ -> "You make stop at planet Korgall for supplies."
+        , actions =
+            [ Action
+                { label = "Resupply and Continue"
+                , apply =
+                    \game seed ->
+                        let
+                            hasGreenSphere =
+                                List.Extra.find
+                                    (\item ->
+                                        case item of
+                                            GreenSphere ->
+                                                True
+
+                                            _ ->
+                                                False
+                                    )
+                                    game.rareItems
+                                    |> Maybe.map (\_ -> True)
+                                    |> Maybe.withDefault False
+                        in
+                        if hasGreenSphere then
+                            Random.step
+                                (Random.map
+                                    (\shuffledCrew ->
+                                        discard
+                                            { game
+                                                | resultOfAction = "While restocking your ship the Korgallians see the green sphere relic and react in rage, attacking your crew. You manage to make it out of there but lose 2 crew members. You later learn that this device was a weapon built to destroy the Korgallians and they thought you were attempting to kill them."
+                                                , crew = List.drop 2 shuffledCrew
+                                            }
+                                    )
+                                    (Random.List.shuffle game.crew)
+                                )
+                                seed
+
+                        else
+                            ( discard { game | resultOfAction = "You restock the ship and continue on your journey." }
+                            , seed
+                            )
+                }
+            ]
+        }
     ]
+
+
+exploreStrangePlanet : Card
+exploreStrangePlanet =
+    Card
+        { label = "Strange Planet Surface"
+        , description = \_ -> "During your exploration you find some ancient ruins."
+        , actions =
+            [ Action
+                { label = "Investigate the Ruins"
+                , apply =
+                    \game seed ->
+                        ( discard { game | resultOfAction = "You delve deeper into the ruins." }
+                            |> addCard exploreRuins
+                        , seed
+                        )
+                }
+            , Action
+                { label = "Leave Planet"
+                , apply =
+                    \game seed ->
+                        ( discard { game | resultOfAction = "You leave the planet and contiue on your journey." }
+                        , seed
+                        )
+                }
+            ]
+        }
+
+
+exploreRuins : Card
+exploreRuins =
+    Card
+        { label = "Inside the Ruins"
+        , description = \_ -> "You come across a small room with 3 pedestals. On top of each you see 3 ancient relics. The one of the left is pyramid shaped with some red markings. The one in the middle is a sphere with vertical green lines. The last is a solid blue cube."
+        , actions =
+            [ Action
+                { label = "Leave the Relics"
+                , apply =
+                    \game seed ->
+                        ( discard { game | resultOfAction = "You delve deeper into the ruins and the relics." }
+                        , seed
+                        )
+                }
+            , Action
+                { label = "Take the Red Pyramid"
+                , apply =
+                    \game seed ->
+                        ( discard
+                            { game
+                                | resultOfAction = "You take the red pyramid back to the ship."
+                                , rareItems = RedPyramid :: game.rareItems
+                            }
+                        , seed
+                        )
+                }
+            , Action
+                { label = "Take the Green Sphere"
+                , apply =
+                    \game seed ->
+                        ( discard
+                            { game
+                                | resultOfAction = "You take the green sphere back to the ship."
+                                , rareItems = GreenSphere :: game.rareItems
+                            }
+                        , seed
+                        )
+                }
+            , Action
+                { label = "Take the Blue Cube"
+                , apply =
+                    \game seed ->
+                        ( discard
+                            { game
+                                | resultOfAction = "You take the blue cube back to the ship."
+                                , rareItems = BlueCube :: game.rareItems
+                            }
+                        , seed
+                        )
+                }
+            ]
+        }
 
 
 pirateBattle : Card
