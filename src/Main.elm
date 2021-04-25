@@ -162,6 +162,9 @@ checkMorale seed game =
     if crewToKill * 2 >= List.length alliedCrew then
         GameOver seed "The crew is abhoard with your actions and mutinies, overthrowing you."
 
+    else if crewToKill == 0 then
+        Playing seed game
+
     else
         let
             ( nextGame, nextSeed ) =
@@ -255,14 +258,32 @@ viewState game =
 
 viewCrew : Game -> Element Msg
 viewCrew state =
-    row
+    column
         [ spacing 16
         , width fill
         , height fill
         ]
-        [ row
-            [ alignTop, spacing 16 ]
-            []
+        [ column
+            [ width fill ]
+            [ el
+                [ padding 8
+                , width fill
+                , Border.solid
+                , Border.widthEach
+                    { top = 0
+                    , bottom = 1
+                    , left = 0
+                    , right = 0
+                    }
+                ]
+                (text "Inventory")
+            , case state.rareItems of
+                [] ->
+                    el [ padding 8 ] (text "Empty")
+
+                _ ->
+                    wrappedRow [ padding 8, spacing 8 ] (List.map viewItem state.rareItems)
+            ]
         , column
             [ width fill
             , height fill
@@ -292,6 +313,20 @@ viewCrew state =
                     ]
             ]
         ]
+
+
+viewItem : Item -> Element Msg
+viewItem item =
+    text <|
+        case item of
+            BlueCube ->
+                "Blue Cube"
+
+            GreenSphere ->
+                "Green Sphere"
+
+            RedPyramid ->
+                "Red Pyramid"
 
 
 viewCrewMember : Crew -> Element Msg
@@ -613,6 +648,17 @@ defaultDeck =
                                                 , crew =
                                                     List.drop 2 shuffledCrew
                                                         |> List.map (Crew.modifyMoral -3 ChaoticEvil)
+                                                , rareItems =
+                                                    List.filter
+                                                        (\item ->
+                                                            case item of
+                                                                GreenSphere ->
+                                                                    False
+
+                                                                _ ->
+                                                                    True
+                                                        )
+                                                        game.rareItems
                                             }
                                     )
                                     (Random.List.shuffle game.crew)
