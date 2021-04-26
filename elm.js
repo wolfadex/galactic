@@ -4844,25 +4844,25 @@ var $elm$core$Array$treeFromBuilder = F2(
 	});
 var $elm$core$Array$builderToArray = F2(
 	function (reverseNodeList, builder) {
-		if (!builder.d) {
+		if (!builder.g) {
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.g),
+				$elm$core$Elm$JsArray$length(builder.l),
 				$elm$core$Array$shiftStep,
 				$elm$core$Elm$JsArray$empty,
-				builder.g);
+				builder.l);
 		} else {
-			var treeLen = builder.d * $elm$core$Array$branchFactor;
+			var treeLen = builder.g * $elm$core$Array$branchFactor;
 			var depth = $elm$core$Basics$floor(
 				A2($elm$core$Basics$logBase, $elm$core$Array$branchFactor, treeLen - 1));
-			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.h) : builder.h;
-			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.d);
+			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.m) : builder.m;
+			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.g);
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.g) + treeLen,
+				$elm$core$Elm$JsArray$length(builder.l) + treeLen,
 				A2($elm$core$Basics$max, 5, depth * $elm$core$Array$shiftStep),
 				tree,
-				builder.g);
+				builder.l);
 		}
 	});
 var $elm$core$Basics$idiv = _Basics_idiv;
@@ -4875,7 +4875,7 @@ var $elm$core$Array$initializeHelp = F5(
 				return A2(
 					$elm$core$Array$builderToArray,
 					false,
-					{h: nodeList, d: (len / $elm$core$Array$branchFactor) | 0, g: tail});
+					{m: nodeList, g: (len / $elm$core$Array$branchFactor) | 0, l: tail});
 			} else {
 				var leaf = $elm$core$Array$Leaf(
 					A3($elm$core$Elm$JsArray$initialize, $elm$core$Array$branchFactor, fromIndex, fn));
@@ -5953,7 +5953,7 @@ var $author$project$Main$checkMorale = F3(
 			function (crew) {
 				return crew.az < 0;
 			},
-			game.n);
+			game.e);
 		var mutinousCrew = _v0.a;
 		var alliedCrew = _v0.b;
 		var crewToKill = ($elm$core$List$length(mutinousCrew) / 4) | 0;
@@ -5973,8 +5973,8 @@ var $author$project$Main$checkMorale = F3(
 							return _Utils_update(
 								game,
 								{
-									n: A2($elm$core$List$drop, crewToKill, shuffledCrew),
-									i: game.i + ('\n\nDue to your actions some of the crew attempts to mutiny but fails. You end up losing ' + ($elm$core$String$fromInt(crewToKill) + ' allied crew memebrs plus those who mutinied.'))
+									e: A2($elm$core$List$drop, crewToKill, shuffledCrew),
+									b: game.b + ('\n\nDue to your actions some of the crew attempts to mutiny but fails. You end up losing ' + ($elm$core$String$fromInt(crewToKill) + ' allied crew memebrs plus those who mutinied.'))
 								});
 						},
 						$elm_community$random_extra$Random$List$shuffle(alliedCrew)),
@@ -5998,6 +5998,23 @@ var $author$project$Game$Cards$addCard = F2(
 				ah: A2($elm$core$List$cons, card, game.ah)
 			});
 	});
+var $elm$random$Random$andThen = F2(
+	function (callback, _v0) {
+		var genA = _v0;
+		return function (seed) {
+			var _v1 = genA(seed);
+			var result = _v1.a;
+			var newSeed = _v1.b;
+			var _v2 = callback(result);
+			var genB = _v2;
+			return genB(newSeed);
+		};
+	});
+var $elm$random$Random$constant = function (value) {
+	return function (seed) {
+		return _Utils_Tuple2(value, seed);
+	};
+};
 var $elm$core$List$takeReverse = F3(
 	function (n, list, kept) {
 		takeReverse:
@@ -6138,76 +6155,76 @@ var $author$project$Game$Item$BlueCube = 0;
 var $author$project$Game$Item$GreenSphere = 2;
 var $author$project$Game$Item$RedPyramid = 1;
 var $author$project$Game$Cards$exploreRuins = {
-	B: _List_fromArray(
+	i: _List_fromArray(
 		[
 			{
-			j: F2(
+			c: F2(
 				function (game, seed) {
 					return _Utils_Tuple2(
 						$author$project$Game$Cards$discard(
 							_Utils_update(
 								game,
-								{i: 'You delve deeper into the ruins and the relics.'})),
+								{b: 'You delve deeper into the ruins and the relics.'})),
 						seed);
 				}),
-			b: 'Leave the Relics'
+			a: 'Leave the Relics'
 		},
 			{
-			j: F2(
+			c: F2(
 				function (game, seed) {
 					return _Utils_Tuple2(
 						$author$project$Game$Cards$discard(
 							_Utils_update(
 								game,
 								{
-									H: A2($elm$core$List$cons, 1, game.H),
-									i: 'You take the red pyramid back to the ship.'
+									s: A2($elm$core$List$cons, 1, game.s),
+									b: 'You take the red pyramid back to the ship.'
 								})),
 						seed);
 				}),
-			b: 'Take the Red Pyramid'
+			a: 'Take the Red Pyramid'
 		},
 			{
-			j: F2(
+			c: F2(
 				function (game, seed) {
 					return _Utils_Tuple2(
 						$author$project$Game$Cards$discard(
 							_Utils_update(
 								game,
 								{
-									H: A2($elm$core$List$cons, 2, game.H),
-									i: 'You take the green sphere back to the ship.'
+									s: A2($elm$core$List$cons, 2, game.s),
+									b: 'You take the green sphere back to the ship.'
 								})),
 						seed);
 				}),
-			b: 'Take the Green Sphere'
+			a: 'Take the Green Sphere'
 		},
 			{
-			j: F2(
+			c: F2(
 				function (game, seed) {
 					return _Utils_Tuple2(
 						$author$project$Game$Cards$discard(
 							_Utils_update(
 								game,
 								{
-									H: A2($elm$core$List$cons, 0, game.H),
-									i: 'You take the blue cube back to the ship.'
+									s: A2($elm$core$List$cons, 0, game.s),
+									b: 'You take the blue cube back to the ship.'
 								})),
 						seed);
 				}),
-			b: 'Take the Blue Cube'
+			a: 'Take the Blue Cube'
 		}
 		]),
-	D: function (_v0) {
+	j: function (_v0) {
 		return 'You come across a small room with 3 pedestals. On top of each you see 3 ancient relics. The one of the left is pyramid shaped with some red markings. The one in the middle is a sphere with vertical green lines. The last is a solid blue cube.';
 	},
-	b: 'Inside the Ruins'
+	a: 'Inside the Ruins'
 };
 var $author$project$Game$Cards$exploreStrangePlanet = {
-	B: _List_fromArray(
+	i: _List_fromArray(
 		[
 			{
-			j: F2(
+			c: F2(
 				function (game, seed) {
 					return _Utils_Tuple2(
 						A2(
@@ -6216,28 +6233,28 @@ var $author$project$Game$Cards$exploreStrangePlanet = {
 							$author$project$Game$Cards$discard(
 								_Utils_update(
 									game,
-									{i: 'You delve deeper into the ruins.'}))),
+									{b: 'You delve deeper into the ruins.'}))),
 						seed);
 				}),
-			b: 'Investigate the Ruins'
+			a: 'Investigate the Ruins'
 		},
 			{
-			j: F2(
+			c: F2(
 				function (game, seed) {
 					return _Utils_Tuple2(
 						$author$project$Game$Cards$discard(
 							_Utils_update(
 								game,
-								{i: 'You leave the planet and contiue on your journey.'})),
+								{b: 'You leave the planet and contiue on your journey.'})),
 						seed);
 				}),
-			b: 'Leave Planet'
+			a: 'Leave Planet'
 		}
 		]),
-	D: function (_v0) {
+	j: function (_v0) {
 		return 'During your exploration you find some ancient ruins.';
 	},
-	b: 'Strange Planet Surface'
+	a: 'Strange Planet Surface'
 };
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
@@ -6705,69 +6722,350 @@ var $author$project$Game$Crew$modifyMoral = F3(
 					$elm$core$Basics$floor(modifier * amount) + crew.az)
 			});
 	});
-var $author$project$Game$Crew$LawfulNeutral = 3;
-var $elm$random$Random$listHelp = F4(
-	function (revList, n, gen, seed) {
-		listHelp:
-		while (true) {
-			if (n < 1) {
-				return _Utils_Tuple2(revList, seed);
-			} else {
-				var _v0 = gen(seed);
-				var value = _v0.a;
-				var newSeed = _v0.b;
-				var $temp$revList = A2($elm$core$List$cons, value, revList),
-					$temp$n = n - 1,
-					$temp$gen = gen,
-					$temp$seed = newSeed;
-				revList = $temp$revList;
-				n = $temp$n;
-				gen = $temp$gen;
-				seed = $temp$seed;
-				continue listHelp;
-			}
-		}
-	});
-var $elm$random$Random$list = F2(
-	function (n, _v0) {
-		var gen = _v0;
-		return function (seed) {
-			return A4($elm$random$Random$listHelp, _List_Nil, n, gen, seed);
-		};
-	});
-var $author$project$Game$Crew$ChaoticGood = 2;
 var $author$project$Game$Crew$ChaoticNeutral = 5;
-var $author$project$Game$Crew$LawfulEvil = 6;
 var $author$project$Game$Crew$NeutralEvil = 7;
-var $author$project$Game$Crew$TrueNeutral = 4;
-var $author$project$Game$Cards$pirateAlignments = _Utils_Tuple2(
-	_Utils_Tuple2(15, 2),
-	_List_fromArray(
+var $author$project$Game$Item$TransdimensionalObject = 3;
+var $author$project$Game$Cards$boardAlienVesselInNebula = {
+	i: _List_fromArray(
 		[
-			_Utils_Tuple2(15, 4),
-			_Utils_Tuple2(10, 5),
-			_Utils_Tuple2(20, 6),
-			_Utils_Tuple2(20, 7),
-			_Utils_Tuple2(20, 8)
-		]));
-var $elm$random$Random$andThen = F2(
-	function (callback, _v0) {
-		var genA = _v0;
-		return function (seed) {
-			var _v1 = genA(seed);
-			var result = _v1.a;
-			var newSeed = _v1.b;
-			var _v2 = callback(result);
-			var genB = _v2;
-			return genB(newSeed);
-		};
-	});
-var $author$project$Game$Crew$personNames = _Utils_Tuple2(
-	'Carl',
-	_List_fromArray(
-		['Bekah', 'Sam', 'Carey', 'Laura', 'Tim', 'Tom', 'Alma', 'Flynn', 'Ash', 'Sean', 'Lance', 'Samantha', 'Raechel', 'Lisa', 'Kelby', 'Vaughn', 'Clarence', 'Joanna', 'Dorothy', 'Isaiah', 'Ibram', 'Elizabeth', 'Liz', 'Jeroen', 'Richard', 'Robert', 'Thomas', 'William', 'Sharon', 'Julian', 'James', 'Megan', 'Alex', 'Alexander', 'Shane', 'Ashley']));
-var $elm$random$Random$addOne = function (value) {
-	return _Utils_Tuple2(1, value);
+			{
+			c: F2(
+				function (game, seed) {
+					return _Utils_Tuple2(
+						$author$project$Game$Cards$discard(
+							_Utils_update(
+								game,
+								{
+									s: A2($elm$core$List$cons, 3, game.s),
+									b: 'You reach out and grab the object. As you do it seems to solidy in our reality. You then head back to your ship and out of the nebula. You notice a bubble around the ship, the objecy must be protexting the ship from the nebula.'
+								})),
+						seed);
+				}),
+			a: 'Attempt to take the Object'
+		},
+			{
+			c: F2(
+				function (game, seed) {
+					return _Utils_Tuple2(
+						_Utils_update(
+							game,
+							{
+								e: A2(
+									$elm$core$List$map,
+									A2($author$project$Game$Crew$modifyMoral, -20, 7),
+									game.e),
+								b: 'You return to your ship and leave the nebula as fast as you can. The journey into and out of the nebula takes a heavy toll on the crew.'
+							}),
+						seed);
+				}),
+			a: 'Leave the Object and Nebula'
+		}
+		]),
+	j: function (_v0) {
+		return 'You take a small group into the alien vessel. After finding their way through various hallways they find a vault of sorts. Inside the valut is a bizzare object that seems to fade in and out of existence, changing shape as it does.';
+	},
+	a: 'Board Alien Nebula Vessel'
+};
+var $author$project$Game$Cards$pushThroughAnamoly = function (timesPushedThrough) {
+	return (timesPushedThrough === 3) ? {
+		i: _List_fromArray(
+			[
+				{
+				c: F2(
+					function (game, seed) {
+						return _Utils_Tuple2(
+							A2(
+								$author$project$Game$Cards$addCard,
+								$author$project$Game$Cards$boardAlienVesselInNebula,
+								$author$project$Game$Cards$discard(
+									_Utils_update(
+										game,
+										{b: 'You approach and board the strange vessel.'}))),
+							seed);
+					}),
+				a: 'Board the Vessel'
+			},
+				{
+				c: F2(
+					function (game, seed) {
+						return A2(
+							$elm$random$Random$step,
+							A3(
+								$elm$random$Random$map2,
+								F2(
+									function (crewKilled, shuffledCrew) {
+										return $author$project$Game$Cards$discard(
+											_Utils_update(
+												game,
+												{
+													e: A2(
+														$elm$core$List$map,
+														A2($author$project$Game$Crew$modifyMoral, (-2) * timesPushedThrough, 5),
+														A2($elm$core$List$drop, crewKilled, shuffledCrew)),
+													b: 'You turn and leave the nebula as fast as you can, though your actions may have been too late. Due to the deterioration of the crew a few accidents occur, killing ' + ($elm$core$String$fromInt(crewKilled) + ' of the crew. Thankfully when you finally make it out, the rest of the crew returns to normal.')
+												}));
+									}),
+								A2($elm$random$Random$int, timesPushedThrough, timesPushedThrough + 3),
+								$elm_community$random_extra$Random$List$shuffle(game.e)),
+							seed);
+					}),
+				a: 'Leave the Nebula'
+			}
+			]),
+		j: function (_v0) {
+			return 'After what seems like seems like forever you find the ship in a void in the nebula. At the center is an alien looking vessel.';
+		},
+		a: 'Hiiden in the Nebula'
+	} : {
+		i: _List_fromArray(
+			[
+				{
+				c: F2(
+					function (game, seed) {
+						return _Utils_Tuple2(
+							A2(
+								$author$project$Game$Cards$addCard,
+								$author$project$Game$Cards$pushThroughAnamoly(timesPushedThrough + 1),
+								$author$project$Game$Cards$discard(
+									_Utils_update(
+										game,
+										{b: 'You push forward through the nebula. Attending to the ill as best you can.'}))),
+							seed);
+					}),
+				a: 'Continue Forward'
+			},
+				{
+				c: F2(
+					function (game, seed) {
+						return A2(
+							$elm$random$Random$step,
+							A3(
+								$elm$random$Random$map2,
+								F2(
+									function (crewKilled, shuffledCrew) {
+										return $author$project$Game$Cards$discard(
+											_Utils_update(
+												game,
+												{
+													e: A2(
+														$elm$core$List$map,
+														A2($author$project$Game$Crew$modifyMoral, (-2) * timesPushedThrough, 5),
+														A2($elm$core$List$drop, crewKilled, shuffledCrew)),
+													b: 'You turn and leave the nebula as fast as you can, though your actions may have been too late. Due to the deterioration of the crew a few accidents occur, killing ' + ($elm$core$String$fromInt(crewKilled) + ' of the crew. Thankfully when you finally make it out, the rest of the crew returns to normal.')
+												}));
+									}),
+								A2($elm$random$Random$int, timesPushedThrough, timesPushedThrough + 3),
+								$elm_community$random_extra$Random$List$shuffle(game.e)),
+							seed);
+					}),
+				a: 'Leave the Nebula'
+			}
+			]),
+		j: function (_v1) {
+			return 'Pushing thorugh the nebula takes a toll on the crew. Many have now reverted to being infants and are unable to do their duty. You still have no clue as to the cause.';
+		},
+		a: 'Push Through Nebula Anomaly'
+	};
+};
+var $author$project$Game$Cards$nebulaAnomaly = {
+	i: _List_fromArray(
+		[
+			{
+			c: F2(
+				function (game, seed) {
+					return _Utils_Tuple2(
+						A2(
+							$author$project$Game$Cards$addCard,
+							$author$project$Game$Cards$pushThroughAnamoly(0),
+							$author$project$Game$Cards$discard(
+								_Utils_update(
+									game,
+									{b: 'You push forward through the nebula. Attending to the ill as best you can.'}))),
+						seed);
+				}),
+			a: 'Continue Forward'
+		},
+			{
+			c: F2(
+				function (game, seed) {
+					return _Utils_Tuple2(
+						$author$project$Game$Cards$discard(
+							_Utils_update(
+								game,
+								{b: 'This odd behavior poses too much of a risk. You turn and leave the nebula as fast as you can. As soon as you exit the nebula everyone begins to very quickly return to normal.'})),
+						seed);
+				}),
+			a: 'Leave the Nebula'
+		}
+		]),
+	j: function (_v0) {
+		return 'As you venture through the nebula, your crew starts to behave strangely. More and more of them start acting like children. Slowly regressing emotionally.';
+	},
+	a: 'Nebula Anomaly'
+};
+var $author$project$Game$Cards$nebulaPirate = {
+	i: _List_fromArray(
+		[
+			{
+			c: F2(
+				function (game, seed) {
+					return A2(
+						$elm$random$Random$step,
+						A3(
+							$elm$random$Random$map2,
+							F2(
+								function (crewKilled, shuffledCrew) {
+									return $author$project$Game$Cards$discard(
+										_Utils_update(
+											game,
+											{
+												e: A2($elm$core$List$drop, crewKilled, shuffledCrew),
+												b: 'You manage to escpae but suffer casualties. ' + ($elm$core$String$fromInt(crewKilled) + ' of your crew memebrs don\'t make it.')
+											}));
+								}),
+							A2($elm$random$Random$int, 7, 16),
+							$elm_community$random_extra$Random$List$shuffle(game.e)),
+						seed);
+				}),
+			a: 'Attempt to Flee'
+		},
+			{
+			c: F2(
+				function (game, seed) {
+					return A2(
+						$elm$random$Random$step,
+						A3(
+							$elm$random$Random$map2,
+							F2(
+								function (crewKilled, shuffledCrew) {
+									return $author$project$Game$Cards$discard(
+										_Utils_update(
+											game,
+											{
+												e: A2($elm$core$List$drop, crewKilled, shuffledCrew),
+												b: 'You turn and engage the pirates head on. This surprises them and you win the battle. Sadly ' + ($elm$core$String$fromInt(crewKilled) + ' of your crew don\'t survive.')
+											}));
+								}),
+							A2($elm$random$Random$int, 3, 9),
+							$elm_community$random_extra$Random$List$shuffle(game.e)),
+						seed);
+				}),
+			a: 'Enage the Pirates'
+		}
+		]),
+	j: function (_v0) {
+		return 'As soon as you enter the nebula a pirate ship appears behind you.';
+	},
+	a: 'Nebula Pirate'
+};
+var $author$project$Game$Item$PuzzleBox = 4;
+var $author$project$Game$Cards$oldWomanInNebula = {
+	i: _List_fromArray(
+		[
+			{
+			c: F2(
+				function (game, seed) {
+					return _Utils_Tuple2(
+						$author$project$Game$Cards$discard(
+							_Utils_update(
+								game,
+								{
+									s: A2($elm$core$List$cons, 4, game.s),
+									b: 'You accept the offer of dinner. After her many stories the old woman gives you a parting gift. A small puzzle box. You take it graciously, then return to your ship and through the nebula.'
+								})),
+						seed);
+				}),
+			a: 'Stay for Dinner'
+		},
+			{
+			c: F2(
+				function (game, seed) {
+					return _Utils_Tuple2(
+						$author$project$Game$Cards$discard(
+							_Utils_update(
+								game,
+								{b: 'You let her know that you must be on your way, heading back to your ship and out fo the nebula.'})),
+						seed);
+				}),
+			a: 'Decline Dinner'
+		}
+		]),
+	j: function (_v0) {
+		return 'The old woman invites you in. She says it\'s been many years since she\'s had visitors. She asks if you\'d like to stay for dinner?';
+	},
+	a: 'Old Woman in Nebula'
+};
+var $author$project$Game$Cards$exploreNebulaPlanet = {
+	i: _List_fromArray(
+		[
+			{
+			c: F2(
+				function (game, seed) {
+					return _Utils_Tuple2(
+						A2(
+							$author$project$Game$Cards$addCard,
+							$author$project$Game$Cards$oldWomanInNebula,
+							$author$project$Game$Cards$discard(
+								_Utils_update(
+									game,
+									{b: 'After hours of hiking you come across a small home that all of the creatures seem to move around. Inside is an old woman.'}))),
+						seed);
+				}),
+			a: 'Delve into the Forest'
+		},
+			{
+			c: F2(
+				function (game, seed) {
+					return _Utils_Tuple2(
+						$author$project$Game$Cards$discard(
+							_Utils_update(
+								game,
+								{b: 'You find nothing of interest and decide to leave. Returning back through the nebula.'})),
+						seed);
+				}),
+			a: 'Leave the Planet'
+		}
+		]),
+	j: function (_v0) {
+		return 'The planet is covered in tree like things that unlike plants seem to move ever so slowly. There\'s also a plethora of other creatures of various shapes and size, all moving incrediblly slowly.';
+	},
+	a: 'Explore Nebula Planet'
+};
+var $author$project$Game$Cards$nebulaPlanet = {
+	i: _List_fromArray(
+		[
+			{
+			c: F2(
+				function (game, seed) {
+					return _Utils_Tuple2(
+						A2(
+							$author$project$Game$Cards$addCard,
+							$author$project$Game$Cards$exploreNebulaPlanet,
+							$author$project$Game$Cards$discard(
+								_Utils_update(
+									game,
+									{b: 'You take down a small contingent to explore.'}))),
+						seed);
+				}),
+			a: 'Explore the Planet'
+		},
+			{
+			c: F2(
+				function (game, seed) {
+					return _Utils_Tuple2(
+						$author$project$Game$Cards$discard(
+							_Utils_update(
+								game,
+								{b: 'You decide it\'s not worth the risk and head back through the nebula. Leaving the planet for someone else to explore.'})),
+						seed);
+				}),
+			a: 'Leave the Planet Be'
+		}
+		]),
+	j: function (_v0) {
+		return 'After traveling through the nebula for what feels like forever you come across a strange looking planet. It seems habitable, but looks nothing like any habitble planet you\'ve ever seen before.';
+	},
+	a: 'Nebula Planet'
 };
 var $elm$random$Random$getByWeight = F3(
 	function (_v0, others, countdown) {
@@ -6812,6 +7110,66 @@ var $elm$random$Random$weighted = F2(
 			A2($elm$random$Random$getByWeight, first, others),
 			A2($elm$random$Random$float, 0, total));
 	});
+var $author$project$Random$Bool$odds = F2(
+	function (oddsTrue, oddsFalse) {
+		return A2(
+			$elm$random$Random$weighted,
+			_Utils_Tuple2(oddsTrue, true),
+			_List_fromArray(
+				[
+					_Utils_Tuple2(oddsFalse, false)
+				]));
+	});
+var $author$project$Game$Crew$LawfulNeutral = 3;
+var $elm$random$Random$listHelp = F4(
+	function (revList, n, gen, seed) {
+		listHelp:
+		while (true) {
+			if (n < 1) {
+				return _Utils_Tuple2(revList, seed);
+			} else {
+				var _v0 = gen(seed);
+				var value = _v0.a;
+				var newSeed = _v0.b;
+				var $temp$revList = A2($elm$core$List$cons, value, revList),
+					$temp$n = n - 1,
+					$temp$gen = gen,
+					$temp$seed = newSeed;
+				revList = $temp$revList;
+				n = $temp$n;
+				gen = $temp$gen;
+				seed = $temp$seed;
+				continue listHelp;
+			}
+		}
+	});
+var $elm$random$Random$list = F2(
+	function (n, _v0) {
+		var gen = _v0;
+		return function (seed) {
+			return A4($elm$random$Random$listHelp, _List_Nil, n, gen, seed);
+		};
+	});
+var $author$project$Game$Crew$ChaoticGood = 2;
+var $author$project$Game$Crew$LawfulEvil = 6;
+var $author$project$Game$Crew$TrueNeutral = 4;
+var $author$project$Game$Cards$pirateAlignments = _Utils_Tuple2(
+	_Utils_Tuple2(15, 2),
+	_List_fromArray(
+		[
+			_Utils_Tuple2(15, 4),
+			_Utils_Tuple2(10, 5),
+			_Utils_Tuple2(20, 6),
+			_Utils_Tuple2(20, 7),
+			_Utils_Tuple2(20, 8)
+		]));
+var $author$project$Game$Crew$personNames = _Utils_Tuple2(
+	'Carl',
+	_List_fromArray(
+		['Bekah', 'Sam', 'Carey', 'Laura', 'Tim', 'Tom', 'Alma', 'Flynn', 'Ash', 'Sean', 'Lance', 'Samantha', 'Raechel', 'Lisa', 'Kelby', 'Vaughn', 'Clarence', 'Joanna', 'Dorothy', 'Isaiah', 'Ibram', 'Elizabeth', 'Liz', 'Jeroen', 'Richard', 'Robert', 'Thomas', 'William', 'Sharon', 'Julian', 'James', 'Megan', 'Alex', 'Alexander', 'Shane', 'Ashley', 'John', 'Jahn', 'Oliver', 'Olivaw', 'Daneel', 'Maryam', 'Rahul', 'Vivek']));
+var $elm$random$Random$addOne = function (value) {
+	return _Utils_Tuple2(1, value);
+};
 var $elm$random$Random$uniform = F2(
 	function (value, valueList) {
 		return A2(
@@ -6860,22 +7218,22 @@ var $author$project$Game$Crew$random = function (_v0) {
 		A2($elm$random$Random$weighted, firstAlignment, restAlignments));
 };
 var $author$project$Game$Cards$pirateBattle = {
-	B: _List_fromArray(
+	i: _List_fromArray(
 		[
 			{
-			j: F2(
+			c: F2(
 				function (game, seed) {
 					return _Utils_Tuple2(
 						$author$project$Game$Cards$discard(
 							_Utils_update(
 								game,
-								{i: 'You jetison the captive pirates.'})),
+								{b: 'You jetison the captive pirates.'})),
 						seed);
 				}),
-			b: 'Toss Them Into Space'
+			a: 'Toss Them Into Space'
 		},
 			{
-			j: F2(
+			c: F2(
 				function (game, seed) {
 					var _v0 = A2(
 						$elm$random$Random$step,
@@ -6892,23 +7250,23 @@ var $author$project$Game$Cards$pirateBattle = {
 							_Utils_update(
 								game,
 								{
-									n: _Utils_ap(
+									e: _Utils_ap(
 										newCrewMembers,
 										A2(
 											$elm$core$List$map,
 											A2($author$project$Game$Crew$modifyMoral, -2, 3),
-											game.n)),
-									i: 'You offer them a chance to join your crew. '
+											game.e)),
+									b: 'You offer them a chance to join your crew. '
 								})),
 						nextSeed);
 				}),
-			b: 'Have Them Join You'
+			a: 'Have Them Join You'
 		}
 		]),
-	D: function (_v1) {
+	j: function (_v1) {
 		return 'The battle with the pirates is rough but you come out on top. You lose some of your crew but the pirate loses are much greater. How will you deal with the captives?';
 	},
-	b: 'Engaged with Pirates'
+	a: 'Engaged with Pirates'
 };
 var $elm$core$Maybe$withDefault = F2(
 	function (_default, maybe) {
@@ -6922,16 +7280,16 @@ var $elm$core$Maybe$withDefault = F2(
 var $author$project$Game$Cards$defaultDeck = _List_fromArray(
 	[
 		{
-		B: _List_fromArray(
+		i: _List_fromArray(
 			[
 				{
-				j: F2(
+				c: F2(
 					function (game, seed) {
-						var crewSize = $elm$core$List$length(game.n);
+						var crewSize = $elm$core$List$length(game.e);
 						var _v0 = A3(
 							$author$project$Game$Cards$killPercentCrew,
 							{ax: 0.35, ay: 0.25},
-							game.n,
+							game.e,
 							seed);
 						var newCrew = _v0.a;
 						var nextSeed = _v0.b;
@@ -6940,23 +7298,23 @@ var $author$project$Game$Cards$defaultDeck = _List_fromArray(
 								_Utils_update(
 									game,
 									{
-										n: newCrew,
-										i: 'You let the virus run its course and you end up losing ' + ($elm$core$String$fromInt(
+										e: newCrew,
+										b: 'You let the virus run its course and you end up losing ' + ($elm$core$String$fromInt(
 											$elm$core$Basics$floor(
 												100 - (($elm$core$List$length(newCrew) * 100) / crewSize))) + '% of the crew.')
 									})),
 							nextSeed);
 					}),
-				b: 'Do Nothing'
+				a: 'Do Nothing'
 			},
 				{
-				j: F2(
+				c: F2(
 					function (game, seed) {
-						var crewSize = $elm$core$List$length(game.n);
+						var crewSize = $elm$core$List$length(game.e);
 						var _v1 = A3(
 							$author$project$Game$Cards$killPercentCrew,
 							{ax: 0.25, ay: 0.15},
-							game.n,
+							game.e,
 							seed);
 						var newCrew = _v1.a;
 						var nextSeed = _v1.b;
@@ -6965,26 +7323,26 @@ var $author$project$Game$Cards$defaultDeck = _List_fromArray(
 								_Utils_update(
 									game,
 									{
-										n: A2(
+										e: A2(
 											$elm$core$List$map,
 											A2($author$project$Game$Crew$modifyMoral, 5, 1),
 											newCrew),
-										i: 'You emphasize that the doctors work on a cure and end up losing ' + ($elm$core$String$fromInt(
+										b: 'You emphasize that the doctors work on a cure and end up losing ' + ($elm$core$String$fromInt(
 											$elm$core$Basics$floor(
 												100 - (($elm$core$List$length(newCrew) * 100) / crewSize))) + '% of the crew. There\'s a slight boost to morale.')
 									})),
 							nextSeed);
 					}),
-				b: 'Prioritize a Vaccine'
+				a: 'Prioritize a Vaccine'
 			},
 				{
-				j: F2(
+				c: F2(
 					function (game, seed) {
-						var crewSize = $elm$core$List$length(game.n);
+						var crewSize = $elm$core$List$length(game.e);
 						var _v2 = A3(
 							$author$project$Game$Cards$killPercentCrew,
 							{ax: 0.15, ay: 0.5},
-							game.n,
+							game.e,
 							seed);
 						var newCrew = _v2.a;
 						var nextSeed = _v2.b;
@@ -6993,32 +7351,32 @@ var $author$project$Game$Cards$defaultDeck = _List_fromArray(
 								_Utils_update(
 									game,
 									{
-										n: A2(
+										e: A2(
 											$elm$core$List$map,
 											A2($author$project$Game$Crew$modifyMoral, -5, 0),
 											newCrew),
-										i: 'You have the sick stictly quarantined, only losing ' + ($elm$core$String$fromInt(
+										b: 'You have the sick stictly quarantined, only losing ' + ($elm$core$String$fromInt(
 											$elm$core$Basics$floor(
 												($elm$core$List$length(newCrew) * 100) / crewSize)) + '% of the crew but also decreasing morale.')
 									})),
 							nextSeed);
 					}),
-				b: 'Quarantine the Infected'
+				a: 'Quarantine the Infected'
 			}
 			]),
-		D: function (_v3) {
-			var crew = _v3.n;
+		j: function (_v3) {
+			var crew = _v3.e;
 			var crewCount = $elm$core$List$length(crew);
 			return 'A viral outbreak is spreading rapidly through the ship. 30% (' + ($elm$core$String$fromInt(
 				$elm$core$Basics$floor(crewCount * 0.3)) + (' of ' + ($elm$core$String$fromInt(crewCount) + ') of the crew is infected and the virus is killing 25% of those infected.')));
 		},
-		b: 'Viral Outbreak'
+		a: 'Viral Outbreak'
 	},
 		{
-		B: _List_fromArray(
+		i: _List_fromArray(
 			[
 				{
-				j: F2(
+				c: F2(
 					function (game, seed) {
 						return _Utils_Tuple2(
 							A2(
@@ -7027,34 +7385,64 @@ var $author$project$Game$Cards$defaultDeck = _List_fromArray(
 								$author$project$Game$Cards$discard(
 									_Utils_update(
 										game,
-										{i: 'You engage wiht the pirates, but who will come out the victor?'}))),
+										{b: 'You engage wiht the pirates, but who will come out the victor?'}))),
 							seed);
 					}),
-				b: 'Challenge the Pirates'
+				a: 'Challenge the Pirates'
+			},
+				{
+				c: F2(
+					function (game, seed) {
+						return A2(
+							$elm$random$Random$step,
+							A2(
+								$elm$random$Random$andThen,
+								function (escapeUnharmed) {
+									return escapeUnharmed ? $elm$random$Random$constant(
+										$author$project$Game$Cards$discard(
+											_Utils_update(
+												game,
+												{b: 'You turn and flee. While the ship takes some minor damage the crew remains safe.'}))) : A2(
+										$elm$random$Random$map,
+										function (shuffledCrew) {
+											return $author$project$Game$Cards$discard(
+												_Utils_update(
+													game,
+													{
+														e: A2($elm$core$List$drop, 4, shuffledCrew),
+														b: 'You turn to flee and the pirates give change. You escape but 4 crew die in the battle.'
+													}));
+										},
+										$elm_community$random_extra$Random$List$shuffle(game.e));
+								},
+								A2($author$project$Random$Bool$odds, 80, 20)),
+							seed);
+					}),
+				a: 'Attempt to Flee'
 			}
 			]),
-		D: function (_v4) {
+		j: function (_v4) {
 			return 'A ship of pirates appears from behind a moon. Before you can react they\'ve come along side your ship and are preparing to board.';
 		},
-		b: 'Pirates'
+		a: 'Pirates'
 	},
 		{
-		B: _List_fromArray(
+		i: _List_fromArray(
 			[
 				{
-				j: F2(
+				c: F2(
 					function (game, seed) {
 						return _Utils_Tuple2(
 							$author$project$Game$Cards$discard(
 								_Utils_update(
 									game,
-									{i: 'You continue on your journey, ignoring the planet.'})),
+									{b: 'You continue on your journey, ignoring the planet.'})),
 							seed);
 					}),
-				b: 'Pass it By'
+				a: 'Pass it By'
 			},
 				{
-				j: F2(
+				c: F2(
 					function (game, seed) {
 						return _Utils_Tuple2(
 							A2(
@@ -7063,22 +7451,22 @@ var $author$project$Game$Cards$defaultDeck = _List_fromArray(
 								$author$project$Game$Cards$discard(
 									_Utils_update(
 										game,
-										{i: 'You send a small group downw to the planet.'}))),
+										{b: 'You send a small group downw to the planet.'}))),
 							seed);
 					}),
-				b: 'Explore The Surface'
+				a: 'Explore The Surface'
 			}
 			]),
-		D: function (_v5) {
+		j: function (_v5) {
 			return 'After traveling for some time you come across a lush, habitible planet.';
 		},
-		b: 'Strange Planet'
+		a: 'Strange Planet'
 	},
 		{
-		B: _List_fromArray(
+		i: _List_fromArray(
 			[
 				{
-				j: F2(
+				c: F2(
 					function (game, seed) {
 						var hasGreenSphere = A2(
 							$elm$core$Maybe$withDefault,
@@ -7097,7 +7485,7 @@ var $author$project$Game$Cards$defaultDeck = _List_fromArray(
 											return false;
 										}
 									},
-									game.H)));
+									game.s)));
 						return hasGreenSphere ? A2(
 							$elm$random$Random$step,
 							A2(
@@ -7107,11 +7495,11 @@ var $author$project$Game$Cards$defaultDeck = _List_fromArray(
 										_Utils_update(
 											game,
 											{
-												n: A2(
+												e: A2(
 													$elm$core$List$map,
 													A2($author$project$Game$Crew$modifyMoral, -3, 8),
 													A2($elm$core$List$drop, 2, shuffledCrew)),
-												H: A2(
+												s: A2(
 													$elm$core$List$filter,
 													function (item) {
 														if (item === 2) {
@@ -7120,47 +7508,96 @@ var $author$project$Game$Cards$defaultDeck = _List_fromArray(
 															return true;
 														}
 													},
-													game.H),
-												i: 'While restocking your ship the Korgallians see the green sphere relic and react in rage, attacking your crew. You manage to make it out of there but lose 2 crew members. You later learn that this device was a weapon built to destroy the Korgallians and they thought you were attempting to kill them.'
+													game.s),
+												b: 'While restocking your ship the Korgallians see the green sphere relic and react in rage, attacking your crew. You manage to make it out of there but lose 2 crew members. You later learn that this device was a weapon built to destroy the Korgallians and they thought you were attempting to kill them.'
 											}));
 								},
-								$elm_community$random_extra$Random$List$shuffle(game.n)),
+								$elm_community$random_extra$Random$List$shuffle(game.e)),
 							seed) : _Utils_Tuple2(
 							$author$project$Game$Cards$discard(
 								_Utils_update(
 									game,
-									{i: 'You restock the ship and continue on your journey.'})),
+									{b: 'You restock the ship and continue on your journey.'})),
 							seed);
 					}),
-				b: 'Resupply and Continue'
+				a: 'Resupply and Continue'
 			}
 			]),
-		D: function (_v9) {
+		j: function (_v9) {
 			return 'You make stop at planet Korgall for supplies.';
 		},
-		b: 'Planet Korgall'
+		a: 'Planet Korgall'
+	},
+		{
+		i: _List_fromArray(
+			[
+				{
+				c: F2(
+					function (game, seed) {
+						return A2(
+							$elm$random$Random$step,
+							A2(
+								$elm$random$Random$map,
+								function (nextCard) {
+									return A2(
+										$author$project$Game$Cards$addCard,
+										nextCard,
+										$author$project$Game$Cards$discard(
+											_Utils_update(
+												game,
+												{b: 'You enter into the Floporian Nebula, what will you find?'})));
+								},
+								A2(
+									$elm$random$Random$weighted,
+									_Utils_Tuple2(33, $author$project$Game$Cards$nebulaPirate),
+									_List_fromArray(
+										[
+											_Utils_Tuple2(33, $author$project$Game$Cards$nebulaPlanet),
+											_Utils_Tuple2(33, $author$project$Game$Cards$nebulaAnomaly)
+										]))),
+							seed);
+					}),
+				a: 'Explore the Nebula'
+			},
+				{
+				c: F2(
+					function (game, seed) {
+						return _Utils_Tuple2(
+							$author$project$Game$Cards$discard(
+								_Utils_update(
+									game,
+									{b: 'You continue on your way, ignoring the nebula.'})),
+							seed);
+					}),
+				a: 'Ignore the Nebula'
+			}
+			]),
+		j: function (_v10) {
+			return 'You pass near the unchated Floporian Nebula.';
+		},
+		a: 'Floporian Nebula'
 	}
 	]);
 var $author$project$Game$Cards$firstCard = {
-	B: _List_fromArray(
+	i: _List_fromArray(
 		[
 			{
-			j: F2(
+			c: F2(
 				function (game, seed) {
 					return _Utils_Tuple2(
 						$author$project$Game$Cards$discard(
 							_Utils_update(
 								game,
-								{i: 'Your journey into the great beyond beigns'})),
+								{b: 'Your journey into the great beyond beigns'})),
 						seed);
 				}),
-			b: 'Launch'
+			a: 'Launch'
 		}
 		]),
-	D: function (_v0) {
+	j: function (_v0) {
 		return 'Begin your voyage';
 	},
-	b: 'Launch Ship'
+	a: 'Launch Ship'
 };
 var $elm$core$List$head = function (list) {
 	if (list.b) {
@@ -7200,11 +7637,11 @@ var $author$project$Game$Crew$moraleMaximum = 100;
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Game$Cards$placeholderCard = {
-	B: _List_Nil,
-	D: function (_v0) {
+	i: _List_Nil,
+	j: function (_v0) {
 		return 'placeholder description';
 	},
-	b: 'placeholder label'
+	a: 'placeholder label'
 };
 var $author$project$Main$update = F2(
 	function (msg, model) {
@@ -7262,7 +7699,7 @@ var $author$project$Main$update = F2(
 								nextSeed,
 								windowSize,
 								{
-									n: crew,
+									e: crew,
 									ah: A2(
 										$elm$core$List$cons,
 										$author$project$Game$Cards$firstCard,
@@ -7271,8 +7708,8 @@ var $author$project$Main$update = F2(
 											_List_fromArray(
 												[$author$project$Game$Cards$placeholderCard]))),
 									a4: _List_Nil,
-									H: _List_Nil,
-									i: 'You board your ship'
+									s: _List_Nil,
+									b: 'You board your ship'
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
@@ -7291,19 +7728,19 @@ var $author$project$Main$update = F2(
 							A2(
 								$elm$core$Maybe$map,
 								function (_v8) {
-									var apply = _v8.j;
+									var apply = _v8.c;
 									return A2(apply, game, seed);
 								},
 								A2(
 									$elm$core$Maybe$andThen,
 									function (_v7) {
-										var actions = _v7.B;
+										var actions = _v7.i;
 										return A2($elm_community$list_extra$List$Extra$getAt, index, actions);
 									},
 									$elm$core$List$head(game.ah))));
 						var nextGame = _v6.a;
 						var nextSeed = _v6.b;
-						return $elm$core$List$isEmpty(nextGame.n) ? _Utils_Tuple2(
+						return $elm$core$List$isEmpty(nextGame.e) ? _Utils_Tuple2(
 							A3($author$project$Main$GameOver, seed, windowSize, 'The crew is all dead, thus ends your journey.'),
 							$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
 							A3($author$project$Main$checkMorale, nextSeed, windowSize, nextGame),
@@ -7337,7 +7774,7 @@ var $mdgriffith$elm_ui$Internal$Model$Height = function (a) {
 	return {$: 8, a: a};
 };
 var $mdgriffith$elm_ui$Element$height = $mdgriffith$elm_ui$Internal$Model$Height;
-var $mdgriffith$elm_ui$Internal$Style$classes = {bP: 'a', aD: 'atv', bR: 'ab', bS: 'cx', bT: 'cy', bU: 'acb', bV: 'accx', bW: 'accy', bX: 'acr', aZ: 'al', a_: 'ar', bY: 'at', aE: 'ah', aF: 'av', b$: 's', b3: 'bh', b4: 'b', b7: 'w7', b9: 'bd', ca: 'bdt', ao: 'bn', cb: 'bs', ap: 'cpe', cg: 'cp', ch: 'cpx', ci: 'cpy', K: 'c', ar: 'ctr', as: 'cb', at: 'ccx', L: 'ccy', ag: 'cl', au: 'cr', cl: 'ct', cm: 'cptr', cn: 'ctxt', ct: 'fcs', a7: 'focus-within', cu: 'fs', cv: 'g', aK: 'hbh', aL: 'hc', bb: 'he', aM: 'hf', bc: 'hfp', cx: 'hv', cz: 'ic', cB: 'fr', aw: 'lbl', cD: 'iml', cE: 'imlf', cF: 'imlp', cG: 'implw', cH: 'it', cI: 'i', bi: 'lnk', ab: 'nb', bl: 'notxt', cO: 'ol', cP: 'or', W: 'oq', cU: 'oh', bo: 'pg', bp: 'p', cV: 'ppe', cX: 'ui', y: 'r', cZ: 'sb', c_: 'sbx', c$: 'sby', c0: 'sbt', c2: 'e', c4: 'cap', c5: 'sev', db: 'sk', t: 't', de: 'tc', df: 'w8', dg: 'w2', dh: 'w9', di: 'tj', aB: 'tja', dj: 'tl', dk: 'w3', dl: 'w5', dm: 'w4', dn: 'tr', $7: 'w6', dp: 'w1', dq: 'tun', bF: 'ts', Z: 'clr', dv: 'u', aV: 'wc', bK: 'we', aW: 'wf', bL: 'wfp', aX: 'wrp'};
+var $mdgriffith$elm_ui$Internal$Style$classes = {bP: 'a', aD: 'atv', bR: 'ab', bS: 'cx', bT: 'cy', bU: 'acb', bV: 'accx', bW: 'accy', bX: 'acr', aZ: 'al', a_: 'ar', bY: 'at', aE: 'ah', aF: 'av', b$: 's', b3: 'bh', b4: 'b', b7: 'w7', b9: 'bd', ca: 'bdt', ao: 'bn', cb: 'bs', ap: 'cpe', cg: 'cp', ch: 'cpx', ci: 'cpy', K: 'c', ar: 'ctr', as: 'cb', at: 'ccx', L: 'ccy', ag: 'cl', au: 'cr', cl: 'ct', cm: 'cptr', cn: 'ctxt', ct: 'fcs', a7: 'focus-within', cu: 'fs', cv: 'g', aK: 'hbh', aL: 'hc', bb: 'he', aM: 'hf', bc: 'hfp', cx: 'hv', cz: 'ic', cB: 'fr', aw: 'lbl', cD: 'iml', cE: 'imlf', cF: 'imlp', cG: 'implw', cH: 'it', cI: 'i', bi: 'lnk', ab: 'nb', bl: 'notxt', cO: 'ol', cP: 'or', W: 'oq', cU: 'oh', bo: 'pg', bp: 'p', cV: 'ppe', cX: 'ui', B: 'r', cZ: 'sb', c_: 'sbx', c$: 'sby', c0: 'sbt', c2: 'e', c4: 'cap', c5: 'sev', db: 'sk', w: 't', de: 'tc', df: 'w8', dg: 'w2', dh: 'w9', di: 'tj', aB: 'tja', dj: 'tl', dk: 'w3', dl: 'w5', dm: 'w4', dn: 'tr', $7: 'w6', dp: 'w1', dq: 'tun', bF: 'ts', Z: 'clr', dv: 'u', aV: 'wc', bK: 'we', aW: 'wf', bL: 'wfp', aX: 'wrp'};
 var $mdgriffith$elm_ui$Internal$Model$Attr = function (a) {
 	return {$: 1, a: a};
 };
@@ -7374,7 +7811,7 @@ var $mdgriffith$elm_ui$Internal$Model$columnClass = $mdgriffith$elm_ui$Internal$
 var $mdgriffith$elm_ui$Internal$Model$gridClass = $mdgriffith$elm_ui$Internal$Style$classes.b$ + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.cv);
 var $mdgriffith$elm_ui$Internal$Model$pageClass = $mdgriffith$elm_ui$Internal$Style$classes.b$ + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.bo);
 var $mdgriffith$elm_ui$Internal$Model$paragraphClass = $mdgriffith$elm_ui$Internal$Style$classes.b$ + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.bp);
-var $mdgriffith$elm_ui$Internal$Model$rowClass = $mdgriffith$elm_ui$Internal$Style$classes.b$ + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.y);
+var $mdgriffith$elm_ui$Internal$Model$rowClass = $mdgriffith$elm_ui$Internal$Style$classes.b$ + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.B);
 var $mdgriffith$elm_ui$Internal$Model$singleClass = $mdgriffith$elm_ui$Internal$Style$classes.b$ + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.c2);
 var $mdgriffith$elm_ui$Internal$Model$contextClasses = function (context) {
 	switch (context) {
@@ -7590,10 +8027,10 @@ var $mdgriffith$elm_ui$Internal$Model$getStyleName = function (style) {
 				A2($elm$core$List$map, $mdgriffith$elm_ui$Internal$Model$lengthClassName, template.cY)) + ('-cols-' + (A2(
 				$elm$core$String$join,
 				'-',
-				A2($elm$core$List$map, $mdgriffith$elm_ui$Internal$Model$lengthClassName, template.C)) + ('-space-x-' + ($mdgriffith$elm_ui$Internal$Model$lengthClassName(template.c6.a) + ('-space-y-' + $mdgriffith$elm_ui$Internal$Model$lengthClassName(template.c6.b)))))));
+				A2($elm$core$List$map, $mdgriffith$elm_ui$Internal$Model$lengthClassName, template.E)) + ('-space-x-' + ($mdgriffith$elm_ui$Internal$Model$lengthClassName(template.c6.a) + ('-space-y-' + $mdgriffith$elm_ui$Internal$Model$lengthClassName(template.c6.b)))))));
 		case 9:
 			var pos = style.a;
-			return 'gp grid-pos-' + ($elm$core$String$fromInt(pos.y) + ('-' + ($elm$core$String$fromInt(pos.cj) + ('-' + ($elm$core$String$fromInt(pos.bJ) + ('-' + $elm$core$String$fromInt(pos.ba)))))));
+			return 'gp grid-pos-' + ($elm$core$String$fromInt(pos.B) + ('-' + ($elm$core$String$fromInt(pos.cj) + ('-' + ($elm$core$String$fromInt(pos.bJ) + ('-' + $elm$core$String$fromInt(pos.ba)))))));
 		case 11:
 			var selector = style.a;
 			var subStyle = style.b;
@@ -8010,7 +8447,7 @@ var $mdgriffith$elm_ui$Internal$Style$elDescription = _List_fromArray(
 			[
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Child,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.t),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.w),
 				_List_fromArray(
 					[
 						A2(
@@ -8622,7 +9059,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'overflow-x', 'auto'),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Descriptor,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.y),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.B),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'flex-shrink', '1')
@@ -8707,7 +9144,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 					])),
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.t),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.w),
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'white-space', 'pre'),
@@ -8728,7 +9165,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 				$mdgriffith$elm_ui$Internal$Style$elDescription),
 				A2(
 				$mdgriffith$elm_ui$Internal$Style$Descriptor,
-				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.y),
+				$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.B),
 				_List_fromArray(
 					[
 						A2($mdgriffith$elm_ui$Internal$Style$Prop, 'display', 'flex'),
@@ -9315,7 +9752,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 							])),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$AllChildren,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.t),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.w),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'display', 'inline'),
@@ -9400,7 +9837,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 									])),
 								A2(
 								$mdgriffith$elm_ui$Internal$Style$Child,
-								$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.t),
+								$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.w),
 								_List_fromArray(
 									[
 										A2($mdgriffith$elm_ui$Internal$Style$Prop, 'display', 'inline'),
@@ -9409,7 +9846,7 @@ var $mdgriffith$elm_ui$Internal$Style$baseSheet = _List_fromArray(
 							])),
 						A2(
 						$mdgriffith$elm_ui$Internal$Style$Child,
-						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.y),
+						$mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.B),
 						_List_fromArray(
 							[
 								A2($mdgriffith$elm_ui$Internal$Style$Prop, 'display', 'inline')
@@ -9714,14 +10151,14 @@ var $mdgriffith$elm_ui$Internal$Style$inputTextReset = '\ninput[type="search"],\
 var $mdgriffith$elm_ui$Internal$Style$sliderReset = '\ninput[type=range] {\n  -webkit-appearance: none; \n  background: transparent;\n  position:absolute;\n  left:0;\n  top:0;\n  z-index:10;\n  width: 100%;\n  outline: dashed 1px;\n  height: 100%;\n  opacity: 0;\n}\n';
 var $mdgriffith$elm_ui$Internal$Style$thumbReset = '\ninput[type=range]::-webkit-slider-thumb {\n    -webkit-appearance: none;\n    opacity: 0.5;\n    width: 80px;\n    height: 80px;\n    background-color: black;\n    border:none;\n    border-radius: 5px;\n}\ninput[type=range]::-moz-range-thumb {\n    opacity: 0.5;\n    width: 80px;\n    height: 80px;\n    background-color: black;\n    border:none;\n    border-radius: 5px;\n}\ninput[type=range]::-ms-thumb {\n    opacity: 0.5;\n    width: 80px;\n    height: 80px;\n    background-color: black;\n    border:none;\n    border-radius: 5px;\n}\ninput[type=range][orient=vertical]{\n    writing-mode: bt-lr; /* IE */\n    -webkit-appearance: slider-vertical;  /* WebKit */\n}\n';
 var $mdgriffith$elm_ui$Internal$Style$trackReset = '\ninput[type=range]::-moz-range-track {\n    background: transparent;\n    cursor: pointer;\n}\ninput[type=range]::-ms-track {\n    background: transparent;\n    cursor: pointer;\n}\ninput[type=range]::-webkit-slider-runnable-track {\n    background: transparent;\n    cursor: pointer;\n}\n';
-var $mdgriffith$elm_ui$Internal$Style$overrides = '@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.b$) + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.y) + (' > ' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.b$) + (' { flex-basis: auto !important; } ' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.b$) + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.y) + (' > ' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.b$) + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.ar) + (' { flex-basis: auto !important; }}' + ($mdgriffith$elm_ui$Internal$Style$inputTextReset + ($mdgriffith$elm_ui$Internal$Style$sliderReset + ($mdgriffith$elm_ui$Internal$Style$trackReset + ($mdgriffith$elm_ui$Internal$Style$thumbReset + $mdgriffith$elm_ui$Internal$Style$explainer)))))))))))))));
+var $mdgriffith$elm_ui$Internal$Style$overrides = '@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.b$) + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.B) + (' > ' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.b$) + (' { flex-basis: auto !important; } ' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.b$) + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.B) + (' > ' + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.b$) + ($mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.ar) + (' { flex-basis: auto !important; }}' + ($mdgriffith$elm_ui$Internal$Style$inputTextReset + ($mdgriffith$elm_ui$Internal$Style$sliderReset + ($mdgriffith$elm_ui$Internal$Style$trackReset + ($mdgriffith$elm_ui$Internal$Style$thumbReset + $mdgriffith$elm_ui$Internal$Style$explainer)))))))))))))));
 var $elm$core$String$concat = function (strings) {
 	return A2($elm$core$String$join, '', strings);
 };
 var $mdgriffith$elm_ui$Internal$Style$Intermediate = $elm$core$Basics$identity;
 var $mdgriffith$elm_ui$Internal$Style$emptyIntermediate = F2(
 	function (selector, closing) {
-		return {aq: closing, l: _List_Nil, O: _List_Nil, z: selector};
+		return {aq: closing, o: _List_Nil, O: _List_Nil, C: selector};
 	});
 var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 	function (_v0, rulesToRender) {
@@ -9748,10 +10185,10 @@ var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 						return _Utils_update(
 							rendered,
 							{
-								l: A2(
+								o: A2(
 									$elm$core$List$cons,
-									{aq: '\n}', l: _List_Nil, O: props, z: '@supports (' + (prop + (':' + (value + (') {' + parent.z))))},
-									rendered.l)
+									{aq: '\n}', o: _List_Nil, O: props, C: '@supports (' + (prop + (':' + (value + (') {' + parent.C))))},
+									rendered.o)
 							});
 					case 5:
 						var selector = rule.a;
@@ -9759,13 +10196,13 @@ var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 						return _Utils_update(
 							rendered,
 							{
-								l: A2(
+								o: A2(
 									$elm$core$List$cons,
 									A2(
 										$mdgriffith$elm_ui$Internal$Style$renderRules,
-										A2($mdgriffith$elm_ui$Internal$Style$emptyIntermediate, parent.z + (' + ' + selector), ''),
+										A2($mdgriffith$elm_ui$Internal$Style$emptyIntermediate, parent.C + (' + ' + selector), ''),
 										adjRules),
-									rendered.l)
+									rendered.o)
 							});
 					case 1:
 						var child = rule.a;
@@ -9773,13 +10210,13 @@ var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 						return _Utils_update(
 							rendered,
 							{
-								l: A2(
+								o: A2(
 									$elm$core$List$cons,
 									A2(
 										$mdgriffith$elm_ui$Internal$Style$renderRules,
-										A2($mdgriffith$elm_ui$Internal$Style$emptyIntermediate, parent.z + (' > ' + child), ''),
+										A2($mdgriffith$elm_ui$Internal$Style$emptyIntermediate, parent.C + (' > ' + child), ''),
 										childRules),
-									rendered.l)
+									rendered.o)
 							});
 					case 2:
 						var child = rule.a;
@@ -9787,13 +10224,13 @@ var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 						return _Utils_update(
 							rendered,
 							{
-								l: A2(
+								o: A2(
 									$elm$core$List$cons,
 									A2(
 										$mdgriffith$elm_ui$Internal$Style$renderRules,
-										A2($mdgriffith$elm_ui$Internal$Style$emptyIntermediate, parent.z + (' ' + child), ''),
+										A2($mdgriffith$elm_ui$Internal$Style$emptyIntermediate, parent.C + (' ' + child), ''),
 										childRules),
-									rendered.l)
+									rendered.o)
 							});
 					case 4:
 						var descriptor = rule.a;
@@ -9801,29 +10238,29 @@ var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 						return _Utils_update(
 							rendered,
 							{
-								l: A2(
+								o: A2(
 									$elm$core$List$cons,
 									A2(
 										$mdgriffith$elm_ui$Internal$Style$renderRules,
 										A2(
 											$mdgriffith$elm_ui$Internal$Style$emptyIntermediate,
-											_Utils_ap(parent.z, descriptor),
+											_Utils_ap(parent.C, descriptor),
 											''),
 										descriptorRules),
-									rendered.l)
+									rendered.o)
 							});
 					default:
 						var batched = rule.a;
 						return _Utils_update(
 							rendered,
 							{
-								l: A2(
+								o: A2(
 									$elm$core$List$cons,
 									A2(
 										$mdgriffith$elm_ui$Internal$Style$renderRules,
-										A2($mdgriffith$elm_ui$Internal$Style$emptyIntermediate, parent.z, ''),
+										A2($mdgriffith$elm_ui$Internal$Style$emptyIntermediate, parent.C, ''),
 										batched),
-									rendered.l)
+									rendered.o)
 							});
 				}
 			});
@@ -9846,7 +10283,7 @@ var $mdgriffith$elm_ui$Internal$Style$renderCompact = function (styleClasses) {
 		if (!_v2.b) {
 			return '';
 		} else {
-			return rule.z + ('{' + (renderValues(rule.O) + (rule.aq + '}')));
+			return rule.C + ('{' + (renderValues(rule.O) + (rule.aq + '}')));
 		}
 	};
 	var renderIntermediate = function (_v0) {
@@ -9854,7 +10291,7 @@ var $mdgriffith$elm_ui$Internal$Style$renderCompact = function (styleClasses) {
 		return _Utils_ap(
 			renderClass(rule),
 			$elm$core$String$concat(
-				A2($elm$core$List$map, renderIntermediate, rule.l)));
+				A2($elm$core$List$map, renderIntermediate, rule.o)));
 	};
 	return $elm$core$String$concat(
 		A2(
@@ -10239,7 +10676,7 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 				var yPx = $elm$core$String$fromInt(y) + 'px';
 				var xPx = $elm$core$String$fromInt(x) + 'px';
 				var single = '.' + $mdgriffith$elm_ui$Internal$Style$classes.c2;
-				var row = '.' + $mdgriffith$elm_ui$Internal$Style$classes.y;
+				var row = '.' + $mdgriffith$elm_ui$Internal$Style$classes.B;
 				var wrappedRow = '.' + ($mdgriffith$elm_ui$Internal$Style$classes.aX + row);
 				var right = '.' + $mdgriffith$elm_ui$Internal$Style$classes.a_;
 				var paragraph = '.' + $mdgriffith$elm_ui$Internal$Style$classes.bp;
@@ -10522,14 +10959,14 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 					A2(
 						$elm$core$String$join,
 						ySpacing,
-						A2($elm$core$List$map, toGridLength, template.C)));
+						A2($elm$core$List$map, toGridLength, template.E)));
 				var msColumns = function (x) {
 					return '-ms-grid-columns: ' + (x + ';');
 				}(
 					A2(
 						$elm$core$String$join,
 						ySpacing,
-						A2($elm$core$List$map, toGridLength, template.C)));
+						A2($elm$core$List$map, toGridLength, template.E)));
 				var gapY = 'grid-row-gap:' + (toGridLength(template.c6.b) + ';');
 				var gapX = 'grid-column-gap:' + (toGridLength(template.c6.a) + ';');
 				var columns = function (x) {
@@ -10538,14 +10975,14 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 					A2(
 						$elm$core$String$join,
 						' ',
-						A2($elm$core$List$map, toGridLength, template.C)));
+						A2($elm$core$List$map, toGridLength, template.E)));
 				var _class = '.grid-rows-' + (A2(
 					$elm$core$String$join,
 					'-',
 					A2($elm$core$List$map, $mdgriffith$elm_ui$Internal$Model$lengthClassName, template.cY)) + ('-cols-' + (A2(
 					$elm$core$String$join,
 					'-',
-					A2($elm$core$List$map, $mdgriffith$elm_ui$Internal$Model$lengthClassName, template.C)) + ('-space-x-' + ($mdgriffith$elm_ui$Internal$Model$lengthClassName(template.c6.a) + ('-space-y-' + $mdgriffith$elm_ui$Internal$Model$lengthClassName(template.c6.b)))))));
+					A2($elm$core$List$map, $mdgriffith$elm_ui$Internal$Model$lengthClassName, template.E)) + ('-space-x-' + ($mdgriffith$elm_ui$Internal$Model$lengthClassName(template.c6.a) + ('-space-y-' + $mdgriffith$elm_ui$Internal$Model$lengthClassName(template.c6.b)))))));
 				var modernGrid = _class + ('{' + (columns + (rows + (gapX + (gapY + '}')))));
 				var supports = '@supports (display:grid) {' + (modernGrid + '}');
 				var base = _class + ('{' + (msColumns + (msRows + '}')));
@@ -10558,7 +10995,7 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 					' ',
 					_List_fromArray(
 						[
-							'-ms-grid-row: ' + ($elm$core$String$fromInt(position.y) + ';'),
+							'-ms-grid-row: ' + ($elm$core$String$fromInt(position.B) + ';'),
 							'-ms-grid-row-span: ' + ($elm$core$String$fromInt(position.ba) + ';'),
 							'-ms-grid-column: ' + ($elm$core$String$fromInt(position.cj) + ';'),
 							'-ms-grid-column-span: ' + ($elm$core$String$fromInt(position.bJ) + ';')
@@ -10568,10 +11005,10 @@ var $mdgriffith$elm_ui$Internal$Model$renderStyleRule = F3(
 					' ',
 					_List_fromArray(
 						[
-							'grid-row: ' + ($elm$core$String$fromInt(position.y) + (' / ' + ($elm$core$String$fromInt(position.y + position.ba) + ';'))),
+							'grid-row: ' + ($elm$core$String$fromInt(position.B) + (' / ' + ($elm$core$String$fromInt(position.B + position.ba) + ';'))),
 							'grid-column: ' + ($elm$core$String$fromInt(position.cj) + (' / ' + ($elm$core$String$fromInt(position.cj + position.bJ) + ';')))
 						]));
-				var _class = '.grid-pos-' + ($elm$core$String$fromInt(position.y) + ('-' + ($elm$core$String$fromInt(position.cj) + ('-' + ($elm$core$String$fromInt(position.bJ) + ('-' + $elm$core$String$fromInt(position.ba)))))));
+				var _class = '.grid-pos-' + ($elm$core$String$fromInt(position.B) + ('-' + ($elm$core$String$fromInt(position.cj) + ('-' + ($elm$core$String$fromInt(position.bJ) + ('-' + $elm$core$String$fromInt(position.ba)))))));
 				var modernGrid = _class + ('{' + (modernPosition + '}'));
 				var supports = '@supports (display:grid) {' + (modernGrid + '}');
 				var base = _class + ('{' + (msPosition + '}'));
@@ -10642,7 +11079,7 @@ var $mdgriffith$elm_ui$Internal$Model$fontRule = F3(
 		return _List_fromArray(
 			[
 				A2($mdgriffith$elm_ui$Internal$Model$bracket, '.' + (name + ('.' + (modifier + (', ' + ('.' + (name + (' .' + modifier))))))), parentAdj),
-				A2($mdgriffith$elm_ui$Internal$Model$bracket, '.' + (name + ('.' + (modifier + ('> .' + ($mdgriffith$elm_ui$Internal$Style$classes.t + (', .' + (name + (' .' + (modifier + (' > .' + $mdgriffith$elm_ui$Internal$Style$classes.t)))))))))), textAdjustment)
+				A2($mdgriffith$elm_ui$Internal$Model$bracket, '.' + (name + ('.' + (modifier + ('> .' + ($mdgriffith$elm_ui$Internal$Style$classes.w + (', .' + (name + (' .' + (modifier + (' > .' + $mdgriffith$elm_ui$Internal$Style$classes.w)))))))))), textAdjustment)
 			]);
 	});
 var $mdgriffith$elm_ui$Internal$Model$renderFontAdjustmentRule = F3(
@@ -10674,7 +11111,7 @@ var $mdgriffith$elm_ui$Internal$Model$renderNullAdjustmentRule = F2(
 						])),
 					A2(
 					$mdgriffith$elm_ui$Internal$Model$bracket,
-					'.' + (name + ('.' + ($mdgriffith$elm_ui$Internal$Style$classes.c4 + ('> .' + ($mdgriffith$elm_ui$Internal$Style$classes.t + (', .' + (name + (' .' + ($mdgriffith$elm_ui$Internal$Style$classes.c4 + (' > .' + $mdgriffith$elm_ui$Internal$Style$classes.t)))))))))),
+					'.' + (name + ('.' + ($mdgriffith$elm_ui$Internal$Style$classes.c4 + ('> .' + ($mdgriffith$elm_ui$Internal$Style$classes.w + (', .' + (name + (' .' + ($mdgriffith$elm_ui$Internal$Style$classes.c4 + (' > .' + $mdgriffith$elm_ui$Internal$Style$classes.w)))))))))),
 					_List_fromArray(
 						[
 							_Utils_Tuple2('vertical-align', '0'),
@@ -11147,7 +11584,7 @@ var $mdgriffith$elm_ui$Internal$Model$finalizeNode = F6(
 		}
 	});
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $mdgriffith$elm_ui$Internal$Model$textElementClasses = $mdgriffith$elm_ui$Internal$Style$classes.b$ + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.t + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.aV + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.aL)))));
+var $mdgriffith$elm_ui$Internal$Model$textElementClasses = $mdgriffith$elm_ui$Internal$Style$classes.b$ + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.w + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.aV + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.aL)))));
 var $mdgriffith$elm_ui$Internal$Model$textElement = function (str) {
 	return A2(
 		$elm$html$Html$div,
@@ -11160,7 +11597,7 @@ var $mdgriffith$elm_ui$Internal$Model$textElement = function (str) {
 				$elm$html$Html$text(str)
 			]));
 };
-var $mdgriffith$elm_ui$Internal$Model$textElementFillClasses = $mdgriffith$elm_ui$Internal$Style$classes.b$ + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.t + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.aW + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.aM)))));
+var $mdgriffith$elm_ui$Internal$Model$textElementFillClasses = $mdgriffith$elm_ui$Internal$Style$classes.b$ + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.w + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.aW + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.aM)))));
 var $mdgriffith$elm_ui$Internal$Model$textElementFill = function (str) {
 	return A2(
 		$elm$html$Html$div,
@@ -11790,7 +12227,7 @@ var $mdgriffith$elm_ui$Internal$Model$renderWidth = function (w) {
 					[
 						A3(
 						$mdgriffith$elm_ui$Internal$Model$Single,
-						$mdgriffith$elm_ui$Internal$Style$classes.b$ + ('.' + ($mdgriffith$elm_ui$Internal$Style$classes.y + (' > ' + $mdgriffith$elm_ui$Internal$Style$dot(
+						$mdgriffith$elm_ui$Internal$Style$classes.b$ + ('.' + ($mdgriffith$elm_ui$Internal$Style$classes.B + (' > ' + $mdgriffith$elm_ui$Internal$Style$dot(
 							'width-fill-' + $elm$core$String$fromInt(portion))))),
 						'flex-grow',
 						$elm$core$String$fromInt(portion * 100000))
@@ -12176,7 +12613,7 @@ var $mdgriffith$elm_ui$Internal$Model$gatherAttrRecursive = F8(
 											$elm$core$List$cons,
 											A3(
 												$mdgriffith$elm_ui$Internal$Model$Single,
-												$mdgriffith$elm_ui$Internal$Style$classes.b$ + ('.' + ($mdgriffith$elm_ui$Internal$Style$classes.y + (' > ' + $mdgriffith$elm_ui$Internal$Style$dot(
+												$mdgriffith$elm_ui$Internal$Style$classes.b$ + ('.' + ($mdgriffith$elm_ui$Internal$Style$classes.B + (' > ' + $mdgriffith$elm_ui$Internal$Style$dot(
 													'width-fill-' + $elm$core$String$fromInt(portion))))),
 												'flex-grow',
 												$elm$core$String$fromInt(portion * 100000)),
@@ -13307,7 +13744,7 @@ var $elm$html$Html$Attributes$tabindex = function (n) {
 var $mdgriffith$elm_ui$Element$Input$button = F2(
 	function (attrs, _v0) {
 		var onPress = _v0.bm;
-		var label = _v0.b;
+		var label = _v0.a;
 		return A4(
 			$mdgriffith$elm_ui$Internal$Model$element,
 			$mdgriffith$elm_ui$Internal$Model$asEl,
@@ -13634,7 +14071,7 @@ var $author$project$Gui$Input$button = F2(
 					]),
 				additionalAttributes),
 			{
-				b: A2(
+				a: A2(
 					$mdgriffith$elm_ui$Element$el,
 					_List_fromArray(
 						[
@@ -13644,7 +14081,7 @@ var $author$project$Gui$Input$button = F2(
 							$mdgriffith$elm_ui$Element$Border$widthEach(
 							{a$: 3, bh: 3, bz: 0, bE: 0})
 						]),
-					config.b),
+					config.a),
 				bm: config.bm
 			});
 	});
@@ -13655,7 +14092,7 @@ var $author$project$Main$viewAction = F2(
 			$author$project$Gui$Input$button,
 			_List_Nil,
 			{
-				b: $mdgriffith$elm_ui$Element$text(action.b),
+				a: $mdgriffith$elm_ui$Element$text(action.a),
 				bm: $elm$core$Maybe$Just(
 					$author$project$Main$PlayCard(index))
 			});
@@ -13885,7 +14322,7 @@ var $author$project$Main$viewCard = F2(
 						_List_fromArray(
 							[
 								$mdgriffith$elm_ui$Element$text(
-								card.D(game))
+								card.j(game))
 							])),
 						A2(
 						$mdgriffith$elm_ui$Element$wrappedRow,
@@ -13893,7 +14330,7 @@ var $author$project$Main$viewCard = F2(
 							[
 								$mdgriffith$elm_ui$Element$spacing(16)
 							]),
-						A2($elm$core$List$indexedMap, $author$project$Main$viewAction, card.B))
+						A2($elm$core$List$indexedMap, $author$project$Main$viewAction, card.i))
 					])));
 	});
 var $author$project$Main$viewDeck = function (game) {
@@ -13924,7 +14361,7 @@ var $author$project$Main$viewDeck = function (game) {
 						]),
 					_List_fromArray(
 						[
-							$mdgriffith$elm_ui$Element$text(game.i)
+							$mdgriffith$elm_ui$Element$text(game.b)
 						])),
 					function () {
 					var _v0 = game.ah;
@@ -13978,8 +14415,12 @@ var $author$project$Game$Item$toString = function (item) {
 			return 'Blue Cube';
 		case 2:
 			return 'Green Sphere';
-		default:
+		case 1:
 			return 'Red Pyramid';
+		case 3:
+			return 'Transdimensional Object';
+		default:
+			return 'Puzzle Box';
 	}
 };
 var $author$project$Main$viewItem = function (item) {
@@ -14017,7 +14458,7 @@ var $author$project$Main$viewCrew = function (state) {
 							]),
 						$mdgriffith$elm_ui$Element$text('Inventory')),
 						function () {
-						var _v0 = state.H;
+						var _v0 = state.s;
 						if (!_v0.b) {
 							return A2(
 								$mdgriffith$elm_ui$Element$el,
@@ -14034,7 +14475,7 @@ var $author$project$Main$viewCrew = function (state) {
 										$mdgriffith$elm_ui$Element$padding(8),
 										$mdgriffith$elm_ui$Element$spacing(8)
 									]),
-								A2($elm$core$List$map, $author$project$Main$viewItem, state.H));
+								A2($elm$core$List$map, $author$project$Main$viewItem, state.s));
 						}
 					}()
 					])),
@@ -14060,7 +14501,7 @@ var $author$project$Main$viewCrew = function (state) {
 							]),
 						$mdgriffith$elm_ui$Element$text(
 							'Crew: ' + $elm$core$String$fromInt(
-								$elm$core$List$length(state.n)))),
+								$elm$core$List$length(state.e)))),
 						A2(
 						$mdgriffith$elm_ui$Element$column,
 						_List_fromArray(
@@ -14079,7 +14520,7 @@ var $author$project$Main$viewCrew = function (state) {
 								function ($) {
 									return $.bk;
 								},
-								state.n)))
+								state.e)))
 					]))
 			]));
 };
