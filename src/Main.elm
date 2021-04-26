@@ -125,7 +125,6 @@ update msg model =
                         :: deck
                         ++ [ Cards.placeholderCard
                            ]
-                , discardDeck = []
                 , resultOfAction = "You board your ship"
                 , crew = crew
                 , rareItems = []

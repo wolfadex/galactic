@@ -14,7 +14,6 @@ import Random exposing (Seed)
 
 type alias Game =
     { deck : Deck
-    , discardDeck : Deck
     , resultOfAction : String
     , crew : List Crew
     , rareItems : List Item

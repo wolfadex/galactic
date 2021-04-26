@@ -750,10 +750,7 @@ pirateAlignments =
 
 discard : Game -> Game
 discard game =
-    { game
-        | deck = List.drop 1 game.deck
-        , discardDeck = List.take 1 game.deck ++ game.discardDeck
-    }
+    { game | deck = List.drop 1 game.deck }
 
 
 addCard : Card -> Game -> Game
