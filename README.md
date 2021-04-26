@@ -8,4 +8,4 @@ Checkout the (WIP) game at https://wolfadex.github.io/galactic/.
 
 Inspired by my love of Star Trek, Stargate, the writings of Isaac Asimov, and so much more.
 
-##### Built with <a target="_blank" rel="noopener noreferrer" href="https://elm-lang.org/"><img src="./elm-logo.svg" height="16px" /></a> and it's beautiful community of tools
+##### Built with <a target="_blank" rel="noopener noreferrer" href="https://elm-lang.org/"><img src="./elmlogo.ico" height="16px" /></a> and it's beautiful community of tools
