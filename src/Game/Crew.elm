@@ -366,5 +366,19 @@ personNames =
       , "Alexander"
       , "Shane"
       , "Ashley"
+      , "John"
+
+      -- Michael J. Pollard character in Star Trek original series episode Miri
+      , "Jahn"
+      , "Oliver"
+
+      -- last name of the primary robot in the Caves of Steel novels
+      , "Olivaw"
+
+      -- first name of the primary robot in the Caves of Steel novels
+      , "Daneel"
+      , "Maryam"
+      , "Rahul"
+      , "Vivek"
       ]
     )
