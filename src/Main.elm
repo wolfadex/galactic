@@ -7,7 +7,7 @@ import Element.Border as Border
 import Game.Cards as Cards
 import Game.Crew as Crew exposing (Alignment(..), Crew)
 import Game.Data exposing (Action(..), Card(..), Game)
-import Game.Item exposing (Item)
+import Game.Item
 import Gui.Color
 import Gui.Input as Input
 import Json.Decode exposing (Decoder, Value)
@@ -305,7 +305,13 @@ viewCrew state =
                     el [ padding 8 ] (text "Empty")
 
                 _ ->
-                    wrappedRow [ padding 8, spacing 8 ] (List.map viewItem state.rareItems)
+                    paragraph
+                        [ padding 8 ]
+                        [ state.rareItems
+                            |> List.map Game.Item.toString
+                            |> String.join ", "
+                            |> text
+                        ]
             ]
         , column
             [ width fill
@@ -336,11 +342,6 @@ viewCrew state =
                     ]
             ]
         ]
-
-
-viewItem : Item -> Element Msg
-viewItem item =
-    text (Game.Item.toString item)
 
 
 viewCrewMember : Crew -> Element Msg
