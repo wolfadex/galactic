@@ -522,7 +522,19 @@ pushThroughAnamoly timesPushedThrough =
     else
         Card
             { label = "Push Through Nebula Anomaly"
-            , description = \_ -> "Pushing thorugh the nebula takes a toll on the crew. Many have now reverted to being infants and are unable to do their duty. You still have no clue as to the cause."
+            , description =
+                \_ ->
+                    if timesPushedThrough == 0 then
+                        "Pushing thorugh the nebula takes a toll on the crew. Many have now reverted to being infants and are unable to do their duty. You still have no clue as to the cause."
+
+                    else if timesPushedThrough == 1 then
+                        "You continue onwards, straining the limits of the crew. Even more have now reverted to being infants and are unable to do their duty. You still have no clue as to the cause."
+
+                    else if timesPushedThrough == 2 then
+                        "The crew is starting to get unruly from the strain. Very many are now unable to do their duty. You still have no clue as to the cause."
+
+                    else
+                        "You're not sure if the vrew can go any furthur, do you dare go on? You still have no clue as to the cause."
             , actions =
                 [ Action
                     { label = "Continue Forward"
