@@ -8,6 +8,8 @@ type Item
     = BlueCube
     | RedPyramid
     | GreenSphere
+    | TransdimensionalObject
+    | PuzzleBox
 
 
 toString : Item -> String
@@ -21,3 +23,9 @@ toString item =
 
         RedPyramid ->
             "Red Pyramid"
+
+        TransdimensionalObject ->
+            "Transdimensional Object"
+
+        PuzzleBox ->
+            "Puzzle Box"

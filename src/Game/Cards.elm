@@ -9,6 +9,7 @@ import Game.Data exposing (Action(..), Card(..), Game)
 import Game.Item exposing (Item(..))
 import List.Extra
 import Random exposing (Seed)
+import Random.Bool
 import Random.List
 
 
@@ -175,7 +176,7 @@ defaultDeck =
                                             )
                                             (Random.List.shuffle game.crew)
                                 )
-                                (Random.weighted ( 80, True ) [ ( 20, False ) ])
+                                (Random.Bool.odds 80 20)
                             )
                             seed
                 }
@@ -262,7 +263,337 @@ defaultDeck =
                 }
             ]
         }
+    , Card
+        { label = "Floporian Nebula"
+        , description = \_ -> "You pass near the unchated Floporian Nebula."
+        , actions =
+            [ Action
+                { label = "Explore the Nebula"
+                , apply =
+                    \game seed ->
+                        Random.step
+                            (Random.map
+                                (\nextCard ->
+                                    discard { game | resultOfAction = "You enter into the Floporian Nebula, what will you find?" }
+                                        |> addCard nextCard
+                                )
+                                (Random.weighted
+                                    ( 33, nebulaPirate )
+                                    [ ( 33, nebulaPlanet )
+                                    , ( 33, nebulaAnomaly )
+                                    ]
+                                )
+                            )
+                            seed
+                }
+            , Action
+                { label = "Ignore the Nebula"
+                , apply =
+                    \game seed ->
+                        ( discard { game | resultOfAction = "You continue on your way, ignoring the nebula." }
+                        , seed
+                        )
+                }
+            ]
+        }
     ]
+
+
+nebulaPirate : Card
+nebulaPirate =
+    Card
+        { label = "Nebula Pirate"
+        , description = \_ -> "As soon as you enter the nebula a pirate ship appears behind you."
+        , actions =
+            [ Action
+                { label = "Attempt to Flee"
+                , apply =
+                    \game seed ->
+                        Random.step
+                            (Random.map2
+                                (\crewKilled shuffledCrew ->
+                                    discard
+                                        { game
+                                            | resultOfAction = "You manage to escpae but suffer casualties. " ++ String.fromInt crewKilled ++ " of your crew memebrs don't make it."
+                                            , crew = List.drop crewKilled shuffledCrew
+                                        }
+                                )
+                                (Random.int 7 16)
+                                (Random.List.shuffle game.crew)
+                            )
+                            seed
+                }
+            , Action
+                { label = "Enage the Pirates"
+                , apply =
+                    \game seed ->
+                        Random.step
+                            (Random.map2
+                                (\crewKilled shuffledCrew ->
+                                    discard
+                                        { game
+                                            | resultOfAction = "You turn and engage the pirates head on. This surprises them and you win the battle. Sadly " ++ String.fromInt crewKilled ++ " of your crew don't survive."
+                                            , crew = List.drop crewKilled shuffledCrew
+                                        }
+                                )
+                                (Random.int 3 9)
+                                (Random.List.shuffle game.crew)
+                            )
+                            seed
+                }
+            ]
+        }
+
+
+nebulaPlanet : Card
+nebulaPlanet =
+    Card
+        { label = "Nebula Planet"
+        , description = \_ -> "After traveling through the nebula for what feels like forever you come across a strange looking planet. It seems habitable, but looks nothing like any habitble planet you've ever seen before."
+        , actions =
+            [ Action
+                { label = "Explore the Planet"
+                , apply =
+                    \game seed ->
+                        ( discard
+                            { game
+                                | resultOfAction = "You take down a small contingent to explore."
+                            }
+                            |> addCard exploreNebulaPlanet
+                        , seed
+                        )
+                }
+            , Action
+                { label = "Leave the Planet Be"
+                , apply =
+                    \game seed ->
+                        ( discard
+                            { game
+                                | resultOfAction = "You decide it's not worth the risk and head back through the nebula. Leaving the planet for someone else to explore."
+                            }
+                        , seed
+                        )
+                }
+            ]
+        }
+
+
+exploreNebulaPlanet : Card
+exploreNebulaPlanet =
+    Card
+        { label = "Explore Nebula Planet"
+        , description = \_ -> "The planet is covered in tree like things that unlike plants seem to move ever so slowly. There's also a plethora of other creatures of various shapes and size, all moving incrediblly slowly."
+        , actions =
+            [ Action
+                { label = "Delve into the Forest"
+                , apply =
+                    \game seed ->
+                        ( discard
+                            { game
+                                | resultOfAction = "After hours of hiking you come across a small home that all of the creatures seem to move around. Inside is an old woman."
+                            }
+                            |> addCard oldWomanInNebula
+                        , seed
+                        )
+                }
+            , Action
+                { label = "Leave the Planet"
+                , apply =
+                    \game seed ->
+                        ( discard
+                            { game
+                                | resultOfAction = "You find nothing of interest and decide to leave. Returning back through the nebula."
+                            }
+                        , seed
+                        )
+                }
+            ]
+        }
+
+
+oldWomanInNebula : Card
+oldWomanInNebula =
+    Card
+        { label = "Old Woman in Nebula"
+        , description = \_ -> "The old woman invites you in. She says it's been many years since she's had visitors. She asks if you'd like to stay for dinner?"
+        , actions =
+            [ Action
+                { label = "Stay for Dinner"
+                , apply =
+                    \game seed ->
+                        ( discard
+                            { game
+                                | resultOfAction = "You accept the offer of dinner. After her many stories the old woman gives you a parting gift. A small puzzle box. You take it graciously, then return to your ship and through the nebula."
+                                , rareItems = PuzzleBox :: game.rareItems
+                            }
+                        , seed
+                        )
+                }
+            , Action
+                { label = "Decline Dinner"
+                , apply =
+                    \game seed ->
+                        ( discard
+                            { game
+                                | resultOfAction = "You let her know that you must be on your way, heading back to your ship and out fo the nebula."
+                            }
+                        , seed
+                        )
+                }
+            ]
+        }
+
+
+nebulaAnomaly : Card
+nebulaAnomaly =
+    Card
+        { label = "Nebula Anomaly"
+        , description = \_ -> "As you venture through the nebula, your crew starts to behave strangely. More and more of them start acting like children. Slowly regressing emotionally."
+        , actions =
+            [ Action
+                { label = "Continue Forward"
+                , apply =
+                    \game seed ->
+                        ( discard
+                            { game
+                                | resultOfAction = "You push forward through the nebula. Attending to the ill as best you can."
+                            }
+                            |> addCard (pushThroughAnamoly 0)
+                        , seed
+                        )
+                }
+            , Action
+                { label = "Leave the Nebula"
+                , apply =
+                    \game seed ->
+                        ( discard
+                            { game
+                                | resultOfAction = "This odd behavior poses too much of a risk. You turn and leave the nebula as fast as you can. As soon as you exit the nebula everyone begins to very quickly return to normal."
+                            }
+                        , seed
+                        )
+                }
+            ]
+        }
+
+
+pushThroughAnamoly : Int -> Card
+pushThroughAnamoly timesPushedThrough =
+    if timesPushedThrough == 3 then
+        Card
+            { label = "Hiiden in the Nebula"
+            , description = \_ -> "After what seems like seems like forever you find the ship in a void in the nebula. At the center is an alien looking vessel."
+            , actions =
+                [ Action
+                    { label = "Board the Vessel"
+                    , apply =
+                        \game seed ->
+                            ( discard
+                                { game
+                                    | resultOfAction = "You approach and board the strange vessel."
+                                }
+                                |> addCard boardAlienVesselInNebula
+                            , seed
+                            )
+                    }
+                , Action
+                    { label = "Leave the Nebula"
+                    , apply =
+                        \game seed ->
+                            Random.step
+                                (Random.map2
+                                    (\crewKilled shuffledCrew ->
+                                        discard
+                                            { game
+                                                | resultOfAction = "You turn and leave the nebula as fast as you can, though your actions may have been too late. Due to the deterioration of the crew a few accidents occur, killing " ++ String.fromInt crewKilled ++ " of the crew. Thankfully when you finally make it out, the rest of the crew returns to normal."
+                                                , crew =
+                                                    List.drop crewKilled shuffledCrew
+                                                        |> List.map (Crew.modifyMoral (-2 * timesPushedThrough) ChaoticNeutral)
+                                            }
+                                    )
+                                    (Random.int timesPushedThrough (timesPushedThrough + 3))
+                                    (Random.List.shuffle game.crew)
+                                )
+                                seed
+                    }
+                ]
+            }
+
+    else
+        Card
+            { label = "Push Through Nebula Anomaly"
+            , description = \_ -> "Pushing thorugh the nebula takes a toll on the crew. Many have now reverted to being infants and are unable to do their duty. You still have no clue as to the cause."
+            , actions =
+                [ Action
+                    { label = "Continue Forward"
+                    , apply =
+                        \game seed ->
+                            ( discard
+                                { game
+                                    | resultOfAction = "You push forward through the nebula. Attending to the ill as best you can."
+                                }
+                                |> addCard (pushThroughAnamoly (timesPushedThrough + 1))
+                            , seed
+                            )
+                    }
+                , Action
+                    { label = "Leave the Nebula"
+                    , apply =
+                        \game seed ->
+                            Random.step
+                                (Random.map2
+                                    (\crewKilled shuffledCrew ->
+                                        discard
+                                            { game
+                                                | resultOfAction = "You turn and leave the nebula as fast as you can, though your actions may have been too late. Due to the deterioration of the crew a few accidents occur, killing " ++ String.fromInt crewKilled ++ " of the crew. Thankfully when you finally make it out, the rest of the crew returns to normal."
+                                                , crew =
+                                                    List.drop crewKilled shuffledCrew
+                                                        |> List.map (Crew.modifyMoral (-2 * timesPushedThrough) ChaoticNeutral)
+                                            }
+                                    )
+                                    (Random.int timesPushedThrough (timesPushedThrough + 3))
+                                    (Random.List.shuffle game.crew)
+                                )
+                                seed
+                    }
+                ]
+            }
+
+
+boardAlienVesselInNebula : Card
+boardAlienVesselInNebula =
+    Card
+        { label = "Board Alien Nebula Vessel"
+        , description = \_ -> "You take a small group into the alien vessel. After finding their way through various hallways they find a vault of sorts. Inside the valut is a bizzare object that seems to fade in and out of existence, changing shape as it does."
+        , actions =
+            [ Action
+                { label = "Attempt to take the Object"
+                , apply =
+                    \game seed ->
+                        ( discard
+                            { game
+                                | resultOfAction = "You reach out and grab the object. As you do it seems to solidy in our reality. You then head back to your ship and out of the nebula. You notice a bubble around the ship, the objecy must be protexting the ship from the nebula."
+                                , rareItems = TransdimensionalObject :: game.rareItems
+                            }
+                        , seed
+                        )
+                }
+            , Action
+                { label = "Leave the Object and Nebula"
+                , apply =
+                    \game seed ->
+                        ( { game
+                            | resultOfAction = "You return to your ship and leave the nebula as fast as you can. The journey into and out of the nebula takes a heavy toll on the crew."
+                            , crew =
+                                List.map
+                                    (Crew.modifyMoral -20 NeutralEvil)
+                                    game.crew
+                          }
+                        , seed
+                        )
+                }
+            ]
+        }
 
 
 exploreStrangePlanet : Card
