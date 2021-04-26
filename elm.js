@@ -14374,6 +14374,20 @@ var $author$project$Main$viewDeck = function (game) {
 				}()
 				])));
 };
+var $author$project$Game$Item$toString = function (item) {
+	switch (item) {
+		case 0:
+			return 'Blue Cube';
+		case 2:
+			return 'Green Sphere';
+		case 1:
+			return 'Red Pyramid';
+		case 3:
+			return 'Transdimensional Object';
+		default:
+			return 'Puzzle Box';
+	}
+};
 var $author$project$Main$moraleToString = function (morale) {
 	return (morale > 80) ? 'very high' : ((morale > 50) ? 'high' : ((morale > 20) ? 'moderate' : ((morale > 0) ? 'low' : 'mutinous')));
 };
@@ -14408,24 +14422,6 @@ var $author$project$Main$viewCrewMember = function (crew) {
 					$mdgriffith$elm_ui$Element$text(
 					'Morale: ' + $author$project$Main$moraleToString(crew.az))
 				])));
-};
-var $author$project$Game$Item$toString = function (item) {
-	switch (item) {
-		case 0:
-			return 'Blue Cube';
-		case 2:
-			return 'Green Sphere';
-		case 1:
-			return 'Red Pyramid';
-		case 3:
-			return 'Transdimensional Object';
-		default:
-			return 'Puzzle Box';
-	}
-};
-var $author$project$Main$viewItem = function (item) {
-	return $mdgriffith$elm_ui$Element$text(
-		$author$project$Game$Item$toString(item));
 };
 var $author$project$Main$viewCrew = function (state) {
 	return A2(
@@ -14469,13 +14465,19 @@ var $author$project$Main$viewCrew = function (state) {
 								$mdgriffith$elm_ui$Element$text('Empty'));
 						} else {
 							return A2(
-								$mdgriffith$elm_ui$Element$wrappedRow,
+								$mdgriffith$elm_ui$Element$paragraph,
 								_List_fromArray(
 									[
-										$mdgriffith$elm_ui$Element$padding(8),
-										$mdgriffith$elm_ui$Element$spacing(8)
+										$mdgriffith$elm_ui$Element$padding(8)
 									]),
-								A2($elm$core$List$map, $author$project$Main$viewItem, state.s));
+								_List_fromArray(
+									[
+										$mdgriffith$elm_ui$Element$text(
+										A2(
+											$elm$core$String$join,
+											', ',
+											A2($elm$core$List$map, $author$project$Game$Item$toString, state.s)))
+									]));
 						}
 					}()
 					])),
