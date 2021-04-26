@@ -6862,7 +6862,7 @@ var $author$project$Game$Cards$pushThroughAnamoly = function (timesPushedThrough
 			}
 			]),
 		j: function (_v1) {
-			return 'Pushing thorugh the nebula takes a toll on the crew. Many have now reverted to being infants and are unable to do their duty. You still have no clue as to the cause.';
+			return (!timesPushedThrough) ? 'Pushing thorugh the nebula takes a toll on the crew. Many have now reverted to being infants and are unable to do their duty. You still have no clue as to the cause.' : ((timesPushedThrough === 1) ? 'You continue onwards, straining the limits of the crew. Even more have now reverted to being infants and are unable to do their duty. You still have no clue as to the cause.' : ((timesPushedThrough === 2) ? 'The crew is starting to get unruly from the strain. Very many are now unable to do their duty. You still have no clue as to the cause.' : 'You\'re not sure if the vrew can go any furthur, do you dare go on? You still have no clue as to the cause.'));
 		},
 		a: 'Push Through Nebula Anomaly'
 	};
