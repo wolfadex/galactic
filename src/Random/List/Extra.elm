@@ -1,9 +1,10 @@
 module Random.List.Extra exposing (pick)
 
+import List.NonEmpty exposing (NonEmptyList)
 import Random exposing (Generator)
 
 
-pick : ( a, List a ) -> Generator ( a, List a )
+pick : NonEmptyList a -> Generator (NonEmptyList a)
 pick ( first, rest ) =
     Random.map
         (\index ->

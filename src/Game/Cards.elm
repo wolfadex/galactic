@@ -150,7 +150,7 @@ defaultDeck =
                 { label = "Challenge the Pirates"
                 , apply =
                     \game seed ->
-                        ( discard { game | resultOfAction = "You engage wiht the pirates, but who will come out the victor?" }
+                        ( discard { game | resultOfAction = "You engage with the pirates, but who will come out the victor?" }
                             |> addCard pirateBattle
                         , seed
                         )
@@ -750,12 +750,14 @@ pirateAlignments =
 
 discard : Game -> Game
 discard game =
-    { game | deck = List.drop 1 game.deck }
+    -- { game | deck = List.drop 1 game.deck }
+    game
 
 
 addCard : Card -> Game -> Game
 addCard card game =
-    { game | deck = card :: game.deck }
+    -- { game | deck = card :: game.deck }
+    game
 
 
 killPercentCrew : { min : Float, max : Float } -> List Crew -> Seed -> ( List Crew, Seed )
