@@ -4,15 +4,14 @@ import Browser exposing (Document)
 import Browser.Events
 import Element exposing (..)
 import Element.Border as Border
-import Game.Cards as Cards
 import Game.Crew as Crew exposing (Alignment(..), Crew)
-import Game.Data exposing (Action(..), Card(..), Game)
+import Game.Data exposing (Applyable(..), Event(..), Game, Reputation(..))
+import Game.Events
 import Game.Item
 import Gui.Color
 import Gui.Input as Input
 import Json.Decode exposing (Decoder, Value)
-import List.Extra
-import Random exposing (Seed)
+import Random exposing (Generator, Seed)
 import Random.List
 
 
@@ -84,7 +83,7 @@ subscriptions _ =
 
 type Msg
     = Initialize Seed
-    | PlayCard Int
+    | ExecuteAction (Game -> Generator Game)
     | WindowResized WindowSize
 
 
@@ -102,10 +101,23 @@ update msg model =
 
         ( Initialize seed, Initializing windowSize ) ->
             let
-                ( ( deck, crew ), nextSeed ) =
+                ( initialGame, nextSeed ) =
                     Random.step
-                        (Random.map2 Tuple.pair
-                            (Random.List.shuffle Cards.defaultDeck)
+                        (Random.map
+                            (\crew ->
+                                { event = Game.Events.firstEvent
+                                , resultOfAction = "You board your ship"
+                                , crew = crew
+                                , rareItems = []
+                                , region =
+                                    { name = "Federation"
+                                    , reputation = Allied
+                                    }
+                                , availableCards = Game.Events.initialSetOfAvailableEvents
+                                , availableRegionNames = Game.Data.regionsNames
+                                , availableThingNames = Game.Data.thingNames
+                                }
+                            )
                             -- 428 is the crew size of the Enterprise
                             (Random.list 428
                                 (Crew.random
@@ -118,28 +130,14 @@ update msg model =
                         )
                         seed
             in
-            ( Playing nextSeed
-                windowSize
-                { deck =
-                    Cards.firstCard
-                        :: deck
-                        ++ [ Cards.placeholderCard
-                           ]
-                , discardDeck = []
-                , resultOfAction = "You board your ship"
-                , crew = crew
-                , rareItems = []
-                }
+            ( Playing nextSeed windowSize initialGame
             , Cmd.none
             )
 
-        ( PlayCard index, Playing seed windowSize game ) ->
+        ( ExecuteAction actionToApply, Playing seed windowSize game ) ->
             let
                 ( nextGame, nextSeed ) =
-                    List.head game.deck
-                        |> Maybe.andThen (\(Card { actions }) -> List.Extra.getAt index actions)
-                        |> Maybe.map (\(Action { apply }) -> apply game seed)
-                        |> Maybe.withDefault ( game, seed )
+                    Random.step (actionToApply game) seed
             in
             if List.isEmpty nextGame.crew then
                 ( GameOver seed windowSize "The crew is all dead, thus ends your journey."
@@ -268,7 +266,7 @@ viewGame game =
     row
         [ spacing 16, width fill, height fill ]
         [ viewState game
-        , viewDeck game
+        , viewEvents game
         ]
 
 
@@ -396,8 +394,8 @@ moraleToString morale =
         "mutinous"
 
 
-viewDeck : Game -> Element Msg
-viewDeck game =
+viewEvents : Game -> Element Msg
+viewEvents game =
     el
         [ width fill, alignTop, height fill, clipY ]
         (column
@@ -405,18 +403,13 @@ viewDeck game =
             [ paragraph
                 [ padding 16 ]
                 [ text game.resultOfAction ]
-            , case game.deck of
-                [] ->
-                    text "deck is empty"
-
-                card :: _ ->
-                    viewCard game card
+            , viewEvent game game.event
             ]
         )
 
 
-viewCard : Game -> Card -> Element Msg
-viewCard game (Card card) =
+viewEvent : Game -> Event -> Element Msg
+viewEvent game (Event event) =
     el
         [ width fill
         , Border.solid
@@ -445,18 +438,18 @@ viewCard game (Card card) =
             ]
             [ paragraph
                 []
-                [ text (card.description game) ]
-            , card.actions
-                |> List.indexedMap viewAction
+                [ text (event.description game) ]
+            , event.actions
+                |> List.map viewAction
                 |> wrappedRow [ spacing 16 ]
             ]
         )
 
 
-viewAction : Int -> Action -> Element Msg
-viewAction index (Action action) =
+viewAction : Applyable -> Element Msg
+viewAction (Applyable action) =
     Input.button
         []
-        { onPress = Just (PlayCard index)
+        { onPress = Just (ExecuteAction action.apply)
         , label = text action.label
         }

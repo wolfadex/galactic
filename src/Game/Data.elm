@@ -1,33 +1,94 @@
 module Game.Data exposing
-    ( Action(..)
-    , Card(..)
+    ( Applyable(..)
+    , Event(..)
     , Game
+    , Region
+    , Reputation(..)
+    , regionsNames
+    , reputationsWeighted
+    , thingNames
     )
 
 import Game.Crew exposing (Crew)
 import Game.Item exposing (Item)
-import Random exposing (Seed)
+import List.NonEmpty exposing (NonEmptyList)
+import Random exposing (Generator)
+import Set exposing (Set)
 
 
 type alias Game =
-    { deck : List Card
-    , discardDeck : List Card
-    , resultOfAction : String
+    { resultOfAction : String
+    , event : Event
     , crew : List Crew
     , rareItems : List Item
+    , region : Region
+    , availableCards : Set Int
+    , availableRegionNames : NonEmptyList String
+    , availableThingNames : NonEmptyList ( String, String )
     }
 
 
-type Card
-    = Card
+type Applyable
+    = Applyable
         { label : String
+        , apply : Game -> Generator Game
+        }
+
+
+type Event
+    = Event
+        { id : String
         , description : Game -> String
-        , actions : List Action
+        , actions : List Applyable
         }
 
 
-type Action
-    = Action
-        { label : String
-        , apply : Game -> Seed -> ( Game, Seed )
-        }
+type alias Region =
+    { name : String
+    , reputation : Reputation
+    }
+
+
+type Reputation
+    = Allied
+    | Friendly
+    | Cordial
+    | Neutral
+    | Unfriendly
+    | Hostile
+
+
+reputationsWeighted : ( ( Float, Reputation ), List ( Float, Reputation ) )
+reputationsWeighted =
+    ( ( 10, Allied )
+    , [ ( 15, Friendly )
+      , ( 20, Cordial )
+      , ( 30, Neutral )
+      , ( 15, Unfriendly )
+      , ( 10, Hostile )
+      ]
+    )
+
+
+
+---- DATA ----
+
+
+regionsNames : NonEmptyList String
+regionsNames =
+    ( "Sector 4"
+    , [ "Parhelion"
+      , "Pantalaimon"
+      , "Giskard"
+      ]
+    )
+
+
+thingNames : NonEmptyList ( String, String )
+thingNames =
+    ( ( "Floporian", "Floporians" )
+    , [ ( "Genojian", "Genojians" )
+      , ( "Kalespiel", "Kalespielians" )
+      , ( "Korgall", "Korgallians" )
+      ]
+    )
