@@ -3,6 +3,9 @@ module Game.Data exposing
     , Event(..)
     , Game
     , Reputation(..)
+    , regionsNames
+    , reputationsWeighted
+    , thingNames
     )
 
 import Game.Crew exposing (Alignment(..), Crew)

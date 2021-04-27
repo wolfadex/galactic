@@ -119,92 +119,51 @@ baseEvents =
                 }
             , gameState
             )
-
-    -- , \gameState ->
-    --     Random.constant
-    --         ( Event
-    --             { id = "Pirates"
-    --             , description = \_ -> "A ship of pirates appears from behind a moon. Before you can react they've come along side your ship and are preparing to board."
-    --             , actions =
-    --                 [ Applyable
-    --                     { label = "Challenge the Pirates"
-    --                     , apply =
-    --                         setResult "You engage with the pirates, but who will come out the victor?"
-    --                             >> setEvent pirateBattle
-    --                     }
-    --                 , Applyable
-    --                     { label = "Attempt to Flee"
-    --                     , apply =
-    --                         \game ->
-    --                             Random.andThen
-    --                                 (\escapeUnharmed ->
-    --                                     if escapeUnharmed then
-    --                                         Random.constant { game | resultOfAction = "You turn and flee. While the ship takes some minor damage the crew remains safe." }
-    --                                     else
-    --                                         Random.map
-    --                                             (\shuffledCrew ->
-    --                                                 { game
-    --                                                     | resultOfAction = "You turn to flee and the pirates give change. You escape but 4 crew die in the battle."
-    --                                                     , crew = List.drop 4 shuffledCrew
-    --                                                 }
-    --                                             )
-    --                                             (Random.List.shuffle game.crew)
-    --                                 )
-    --                                 (Random.Bool.odds 80 20)
-    --                                 |> Random.andThen randomEvent
-    --                     }
-    --                 ]
-    --             }
-    --         , gameState
-    --         )
     , \gameState ->
-        Random.map
-            (\uniqueName ->
-                ( Event
-                    { id = "the " ++ uniqueName ++ " pirates of " ++ gameState.region.name
-                    , description = \_ -> "A ship of " ++ uniqueName ++ " pirates appears from behind a moon. Before you can react they've come along side your ship and are preparing to board."
-                    , actions =
-                        [ Applyable
-                            { label = "Challenge the Pirates"
-                            , apply =
-                                \game ->
-                                    let
-                                        ( event, g ) =
-                                            pirateBattle
-                                                { game
-                                                    | resultOfAction = "You engage with the pirates, but who will come out the victor?"
-                                                }
-                                    in
-                                    setEvent event g
-                            }
-                        , Applyable
-                            { label = "Attempt to Flee"
-                            , apply =
-                                \game ->
-                                    Random.Bool.odds 80 20
-                                        |> Random.andThen
-                                            (\escapeUnharmed ->
-                                                if escapeUnharmed then
-                                                    Random.constant { game | resultOfAction = "You turn and flee. While the ship takes some minor damage the crew remains safe." }
+        Random.constant
+            ( Event
+                { id = "pirates of " ++ gameState.region.name
+                , description = \_ -> "A ship of " ++ gameState.region.name ++ " pirates appears from behind a moon. Before you can react they've come along side your ship and are preparing to board."
+                , actions =
+                    [ Applyable
+                        { label = "Challenge the Pirates"
+                        , apply =
+                            \game ->
+                                let
+                                    ( event, g ) =
+                                        pirateBattle
+                                            { game
+                                                | resultOfAction = "You engage with the pirates, but who will come out the victor?"
+                                            }
+                                in
+                                setEvent event g
+                        }
+                    , Applyable
+                        { label = "Attempt to Flee"
+                        , apply =
+                            \game ->
+                                Random.Bool.odds 80 20
+                                    |> Random.andThen
+                                        (\escapeUnharmed ->
+                                            if escapeUnharmed then
+                                                Random.constant { game | resultOfAction = "You turn and flee. While the ship takes some minor damage the crew remains safe." }
 
-                                                else
-                                                    Random.map
-                                                        (\shuffledCrew ->
-                                                            { game
-                                                                | resultOfAction = "You turn to flee and the pirates give change. You escape but 4 crew die in the battle."
-                                                                , crew = List.drop 4 shuffledCrew
-                                                            }
-                                                        )
-                                                        (Random.List.shuffle game.crew)
-                                            )
-                                        |> Random.andThen randomEvent
-                            }
-                        ]
-                    }
-                , gameState
-                )
+                                            else
+                                                Random.map
+                                                    (\shuffledCrew ->
+                                                        { game
+                                                            | resultOfAction = "You turn to flee and the pirates give change. You escape but 4 crew die in the battle."
+                                                            , crew = List.drop 4 shuffledCrew
+                                                        }
+                                                    )
+                                                    (Random.List.shuffle game.crew)
+                                        )
+                                    |> Random.andThen randomEvent
+                        }
+                    ]
+                }
+            , gameState
             )
-            (Random.constant "carl")
     , \gameState ->
         Random.constant
             ( Event
@@ -614,42 +573,6 @@ exploreRuins =
                 }
             ]
         }
-
-
-
--- pirateBattle : Event
--- pirateBattle =
---     Event
---         { id = "Engaged with Pirates"
---         , description = \_ -> "The battle with the pirates is rough but you come out on top. You lose some of your crew but the pirate loses are much greater. How will you deal with the captives?"
---         , actions =
---             [ Applyable
---                 { label = "Toss Them Into Space"
---                 , apply = setResult "You jetison the captive pirates." >> randomEvent
---                 }
---             , Applyable
---                 { label = "Have Them Join You"
---                 , apply =
---                     \game ->
---                         Random.andThen
---                             (\newCrewMembers ->
---                                 randomEvent
---                                     { game
---                                         | resultOfAction = "You offer them a chance to join your crew. "
---                                         , crew = newCrewMembers ++ List.map (Crew.modifyMoral -2 LawfulNeutral) game.crew
---                                     }
---                             )
---                             (Random.list 5
---                                 (Crew.random
---                                     { moraleMin = 30
---                                     , moraleMax = 40
---                                     , alignmentsWeighted = pirateAlignments
---                                     }
---                                 )
---                             )
---                 }
---             ]
---         }
 
 
 pirateBattle : Game -> ( Event, Game )
