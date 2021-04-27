@@ -1,8 +1,4 @@
-module Game.Cards exposing
-    ( defaultDeck
-    , firstCard
-    , placeholderCard
-    )
+module Game.Cards exposing (defaultDeck)
 
 import Game.Crew as Crew exposing (Alignment(..), Crew)
 import Game.Data exposing (Action(..), Card(..), Game)
@@ -11,33 +7,6 @@ import List.Extra
 import Random exposing (Seed)
 import Random.Bool
 import Random.List
-
-
-placeholderCard : Card
-placeholderCard =
-    Card
-        { label = "placeholder label"
-        , description = \_ -> "placeholder description"
-        , actions = []
-        }
-
-
-firstCard : Card
-firstCard =
-    Card
-        { label = "Launch Ship"
-        , description = \_ -> "Begin your voyage"
-        , actions =
-            [ Action
-                { label = "Launch"
-                , apply =
-                    \game seed ->
-                        ( discard { game | resultOfAction = "Your journey into the great beyond beigns" }
-                        , seed
-                        )
-                }
-            ]
-        }
 
 
 defaultDeck : List Card

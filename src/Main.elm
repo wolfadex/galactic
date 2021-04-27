@@ -102,24 +102,22 @@ update msg model =
 
         ( Initialize seed, Initializing windowSize ) ->
             let
-                initialGameState : Game
-                initialGameState =
-                    { event = Game.Data.emptyEvent
-                    , resultOfAction = "You board your ship"
-                    , crew = []
-                    , rareItems = []
-                    , region =
-                        { name = "Federation"
-                        , reputation = Allied
-                        }
-                    , availableCards = Set.fromList (List.range 0 (List.length Game.Data.baseEvents - 1))
-                    , availableRegionNames = Set.singleton "carl"
-                    }
-
-                ( startingGame, nextSeed ) =
+                ( initialGame, nextSeed ) =
                     Random.step
-                        (Random.map2
-                            (\crew game -> { game | crew = crew })
+                        (Random.map
+                            (\crew ->
+                                { event = Game.Data.firstEvent
+                                , resultOfAction = "You board your ship"
+                                , crew = crew
+                                , rareItems = []
+                                , region =
+                                    { name = "Federation"
+                                    , reputation = Allied
+                                    }
+                                , availableCards = Set.fromList (List.range 0 (List.length Game.Data.baseEvents - 1))
+                                , availableRegionNames = Set.singleton "carl"
+                                }
+                            )
                             -- 428 is the crew size of the Enterprise
                             (Random.list 428
                                 (Crew.random
@@ -129,11 +127,10 @@ update msg model =
                                     }
                                 )
                             )
-                            (Game.Data.nextEvent initialGameState)
                         )
                         seed
             in
-            ( Playing nextSeed windowSize startingGame
+            ( Playing nextSeed windowSize initialGame
             , Cmd.none
             )
 

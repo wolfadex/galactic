@@ -8,6 +8,7 @@ module Game.Data exposing
     , Reputation(..)
     , baseEvents
     , emptyEvent
+    , firstEvent
     , nextEvent
     )
 
@@ -71,6 +72,22 @@ emptyEvent =
         { id = ""
         , description = \_ -> ""
         , actions = []
+        }
+
+
+firstEvent : Event
+firstEvent =
+    Event
+        { id = "Launch Ship"
+        , description = \_ -> "Begin your voyage"
+        , actions =
+            [ Applyable
+                { label = "Launch"
+                , apply =
+                    \game ->
+                        nextEvent { game | resultOfAction = "Your journey into the great beyond beigns" }
+                }
+            ]
         }
 
 
