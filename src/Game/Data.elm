@@ -23,7 +23,7 @@ type alias Game =
     , rareItems : List Item
     , region : Region
     , availableCards : Set Int
-    , availableRegionNames : Set String
+    , availableRegionNames : NonEmptyList String
     , availableThingNames : NonEmptyList ( String, String )
     }
 
