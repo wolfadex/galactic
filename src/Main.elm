@@ -5,7 +5,8 @@ import Browser.Events
 import Element exposing (..)
 import Element.Border as Border
 import Game.Crew as Crew exposing (Alignment(..), Crew)
-import Game.Data exposing (Action(..), Applyable(..), Card(..), Event(..), Game, Reputation(..))
+import Game.Data exposing (Applyable(..), Event(..), Game, Reputation(..))
+import Game.Events
 import Game.Item
 import Gui.Color
 import Gui.Input as Input
@@ -106,7 +107,7 @@ update msg model =
                     Random.step
                         (Random.map
                             (\crew ->
-                                { event = Game.Data.firstEvent
+                                { event = Game.Events.firstEvent
                                 , resultOfAction = "You board your ship"
                                 , crew = crew
                                 , rareItems = []
@@ -114,7 +115,7 @@ update msg model =
                                     { name = "Federation"
                                     , reputation = Allied
                                     }
-                                , availableCards = Set.fromList (List.range 0 (List.length Game.Data.baseEvents - 1))
+                                , availableCards = Set.fromList (List.range 0 (List.length Game.Events.baseEvents - 1))
                                 , availableRegionNames = Set.singleton "carl"
                                 }
                             )
