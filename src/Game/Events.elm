@@ -5,8 +5,6 @@ module Game.Events exposing
 
 import Game.Crew as Crew exposing (Alignment(..), Crew)
 import Game.Data exposing (Applyable(..), Event(..), Game)
-import Game.Item exposing (Item(..))
-import List.Extra
 import List.NonEmpty
 import Random exposing (Generator)
 import Random.Bool
@@ -14,6 +12,7 @@ import Random.Extra
 import Random.List
 import Random.List.Extra
 import Set exposing (Set)
+import String.Extra
 
 
 baseEvents : List (Game -> Generator ( Event, Game ))
@@ -198,39 +197,19 @@ baseEvents =
                                     let
                                         hasGreenSphere : Bool
                                         hasGreenSphere =
-                                            List.Extra.find
-                                                (\item ->
-                                                    case item of
-                                                        GreenSphere ->
-                                                            True
-
-                                                        _ ->
-                                                            False
-                                                )
-                                                game.rareItems
-                                                |> Maybe.map (\_ -> True)
-                                                |> Maybe.withDefault False
+                                            List.member "green sphere" game.rareItems
                                     in
                                     if hasGreenSphere then
                                         Random.andThen
                                             (\shuffledCrew ->
                                                 randomEvent
                                                     { game
-                                                        | resultOfAction = "While restocking your ship the " ++ pluralName ++ " see the green sphere relic and react in rage, attacking your crew. You manage to make it out of there but lose 2 crew members. You later learn that this device was a weapon built to destroy the " ++ pluralName ++ " and they thought you were attempting to kill them."
+                                                        | resultOfAction = "While restocking your ship the " ++ pluralName ++ " see the Green Sphere relic and react in rage, attacking your crew. You manage to make it out of there but lose 2 crew members. You later learn that this device was a weapon built to destroy the " ++ pluralName ++ " and they thought you were attempting to kill them."
                                                         , crew =
                                                             List.drop 2 shuffledCrew
                                                                 |> List.map (Crew.modifyMoral -3 ChaoticEvil)
                                                         , rareItems =
-                                                            List.filter
-                                                                (\item ->
-                                                                    case item of
-                                                                        GreenSphere ->
-                                                                            False
-
-                                                                        _ ->
-                                                                            True
-                                                                )
-                                                                game.rareItems
+                                                            List.filter ((/=) "green sphere") game.rareItems
                                                     }
                                             )
                                             (Random.List.shuffle game.crew)
@@ -385,7 +364,7 @@ oldWomanInNebula =
                         randomEvent
                             { game
                                 | resultOfAction = "You accept the offer of dinner. After her many stories the old woman gives you a parting gift. A small puzzle box. You take it graciously, then return to your ship and through the nebula."
-                                , rareItems = PuzzleBox :: game.rareItems
+                                , rareItems = "puzzle box" :: game.rareItems
                             }
                 }
             , Applyable
@@ -510,7 +489,7 @@ boardAlienVesselInNebula =
                         randomEvent
                             { game
                                 | resultOfAction = "You reach out and grab the object. As you do it seems to solidy in our reality. You then head back to your ship and out of the nebula. You notice a bubble around the ship, the objecy must be protexting the ship from the nebula."
-                                , rareItems = TransdimensionalObject :: game.rareItems
+                                , rareItems = "transdimensional object" :: game.rareItems
                             }
                 }
             , Applyable
@@ -535,7 +514,14 @@ exploreStrangePlanet =
         , actions =
             [ Applyable
                 { label = "Investigate the Ruins"
-                , apply = setResult "You delve deeper into the ruins." >> setEvent exploreRuins
+                , apply =
+                    \game ->
+                        Random.andThen
+                            (\event ->
+                                setResult "You delve deeper into the ruins." game
+                                    |> setEvent event
+                            )
+                            exploreRuins
                 }
             , Applyable
                 { label = "Leave Planet"
@@ -545,48 +531,72 @@ exploreStrangePlanet =
         }
 
 
-exploreRuins : Event
+exploreRuins : Generator Event
 exploreRuins =
-    Event
-        { id = "Inside the Ruins"
-        , description = \_ -> "You come across a small room with 3 pedestals. On top of each you see 3 ancient relics. The one of the left is pyramid shaped with some red markings. The one in the middle is a sphere with vertical green lines. The last is a solid blue cube."
-        , actions =
-            [ Applyable
-                { label = "Leave the Relics"
-                , apply = setResult "You delve deeper into the ruins and the relics." >> randomEvent
+    Random.map3
+        (\relic1 relic2 relic3 ->
+            Event
+                { id = "Inside the Ruins"
+                , description =
+                    \_ ->
+                        "You come across a small room with 3 pedestals. On top of each you see 3 ancient relics. The one of the left is "
+                            ++ relic1
+                            ++ ". The one in the middle is a "
+                            ++ relic2
+                            ++ ". The last is a "
+                            ++ relic3
+                            ++ "."
+                , actions =
+                    [ Applyable
+                        { label = "Leave the Relics"
+                        , apply = setResult "You delve deeper into the ruins and the relics." >> randomEvent
+                        }
+                    , Applyable
+                        { label = "Take the " ++ String.Extra.toTitleCase relic1
+                        , apply =
+                            \game ->
+                                randomEvent
+                                    { game
+                                        | resultOfAction = "You take the " ++ relic1 ++ " back to the ship."
+                                        , rareItems = relic1 :: game.rareItems
+                                    }
+                        }
+                    , Applyable
+                        { label = "Take the " ++ String.Extra.toTitleCase relic2
+                        , apply =
+                            \game ->
+                                randomEvent
+                                    { game
+                                        | resultOfAction = "You take the " ++ relic2 ++ " back to the ship."
+                                        , rareItems = relic2 :: game.rareItems
+                                    }
+                        }
+                    , Applyable
+                        { label = "Take the " ++ String.Extra.toTitleCase relic3
+                        , apply =
+                            \game ->
+                                randomEvent
+                                    { game
+                                        | resultOfAction = "You take the " ++ relic3 ++ " back to the ship."
+                                        , rareItems = relic3 :: game.rareItems
+                                    }
+                        }
+                    ]
                 }
-            , Applyable
-                { label = "Take the Red Pyramid"
-                , apply =
-                    \game ->
-                        randomEvent
-                            { game
-                                | resultOfAction = "You take the red pyramid back to the ship."
-                                , rareItems = RedPyramid :: game.rareItems
-                            }
-                }
-            , Applyable
-                { label = "Take the Green Sphere"
-                , apply =
-                    \game ->
-                        randomEvent
-                            { game
-                                | resultOfAction = "You take the green sphere back to the ship."
-                                , rareItems = GreenSphere :: game.rareItems
-                            }
-                }
-            , Applyable
-                { label = "Take the Blue Cube"
-                , apply =
-                    \game ->
-                        randomEvent
-                            { game
-                                | resultOfAction = "You take the blue cube back to the ship."
-                                , rareItems = BlueCube :: game.rareItems
-                            }
-                }
-            ]
-        }
+        )
+        coloredShape3d
+        coloredShape3d
+        coloredShape3d
+
+
+coloredShape3d : Generator String
+coloredShape3d =
+    Random.map2
+        (\( color, _ ) ( shape, _ ) ->
+            color ++ " " ++ shape
+        )
+        (Random.List.Extra.pick Game.Data.colors)
+        (Random.List.Extra.pick Game.Data.shapes3d)
 
 
 pirateBattle : Game -> ( Event, Game )

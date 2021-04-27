@@ -7,12 +7,12 @@ import Element.Border as Border
 import Game.Crew as Crew exposing (Alignment(..), Crew)
 import Game.Data exposing (Applyable(..), Event(..), Game, Reputation(..))
 import Game.Events
-import Game.Item
 import Gui.Color
 import Gui.Input as Input
 import Json.Decode exposing (Decoder, Value)
 import Random exposing (Generator, Seed)
 import Random.List
+import String.Extra
 
 
 main : Program Flags Model Msg
@@ -306,7 +306,7 @@ viewCrew state =
                     paragraph
                         [ padding 8 ]
                         [ state.rareItems
-                            |> List.map Game.Item.toString
+                            |> List.map String.Extra.toTitleCase
                             |> String.join ", "
                             |> text
                         ]

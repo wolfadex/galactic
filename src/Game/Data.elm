@@ -4,13 +4,14 @@ module Game.Data exposing
     , Game
     , Region
     , Reputation(..)
+    , colors
     , regionsNames
     , reputationsWeighted
+    , shapes3d
     , thingNames
     )
 
 import Game.Crew exposing (Crew)
-import Game.Item exposing (Item)
 import List.NonEmpty exposing (NonEmptyList)
 import Random exposing (Generator)
 import Set exposing (Set)
@@ -20,7 +21,7 @@ type alias Game =
     { resultOfAction : String
     , event : Event
     , crew : List Crew
-    , rareItems : List Item
+    , rareItems : List String
     , region : Region
     , availableCards : Set Int
     , availableRegionNames : NonEmptyList String
@@ -92,3 +93,57 @@ thingNames =
       , ( "Korgall", "Korgallians" )
       ]
     )
+
+
+colors : NonEmptyList String
+colors =
+    ( "red"
+    , [ "green"
+      , "blue"
+      , "orange"
+      , "magenta"
+      , "magenta"
+      , "pink"
+      , "gray"
+      , "black"
+      , "white"
+      , "Fuchsia"
+      ]
+    )
+
+
+shapes3d : NonEmptyList String
+shapes3d =
+    ( "sphere"
+    , [ "cube"
+      , "pyramid"
+      , "capsule"
+      , "cone"
+      , "icosahedron"
+      , "cylinder"
+      , "tube"
+      , "torus"
+      ]
+    )
+
+
+
+-- shapes2d : NonEmptyList String
+-- shapes2d =
+--     ( "circle"
+--     , [ "dot"
+--       , "line"
+--       , "triangle"
+--       , "square"
+--       , "hexagon"
+--       ]
+--     )
+-- pattern : NonEmptyList String
+-- pattern =
+--     ( "solid"
+--     , [ "striped"
+--       , "dotted"
+--       , "splotchy"
+--       , "hatched"
+--       ]
+--     )
