@@ -6,15 +6,13 @@ import Element exposing (..)
 import Element.Border as Border
 import Game.Crew as Crew exposing (Alignment(..), Crew)
 import Game.Data exposing (Applyable(..), Event(..), Game, Reputation(..))
-import Game.Events exposing (initialSetOfAvailableEvents)
+import Game.Events
 import Game.Item
 import Gui.Color
 import Gui.Input as Input
 import Json.Decode exposing (Decoder, Value)
 import Random exposing (Generator, Seed)
 import Random.List
-import Set
-import Toople exposing (Tuple2(..), Tuple3(..))
 
 
 main : Program Flags Model Msg

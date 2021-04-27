@@ -1,14 +1,10 @@
 module Game.Events exposing
-    ( baseEvents
-    , emptyEvent
-    , firstEvent
-    , getAt
+    ( firstEvent
     , initialSetOfAvailableEvents
-    , randomEvent
     )
 
 import Game.Crew as Crew exposing (Alignment(..), Crew)
-import Game.Data exposing (Applyable(..), Event(..), Game, Reputation)
+import Game.Data exposing (Applyable(..), Event(..), Game)
 import Game.Item exposing (Item(..))
 import List.Extra
 import List.NonEmpty

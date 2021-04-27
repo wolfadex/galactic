@@ -2,13 +2,14 @@ module Game.Data exposing
     ( Applyable(..)
     , Event(..)
     , Game
+    , Region
     , Reputation(..)
     , regionsNames
     , reputationsWeighted
     , thingNames
     )
 
-import Game.Crew exposing (Alignment(..), Crew)
+import Game.Crew exposing (Crew)
 import Game.Item exposing (Item)
 import List.NonEmpty exposing (NonEmptyList)
 import Random exposing (Generator)
