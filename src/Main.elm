@@ -6,7 +6,7 @@ import Element exposing (..)
 import Element.Border as Border
 import Game.Crew as Crew exposing (Alignment(..), Crew)
 import Game.Data exposing (Applyable(..), Event(..), Game, Reputation(..))
-import Game.Events
+import Game.Events exposing (initialSetOfAvailableEvents)
 import Game.Item
 import Gui.Color
 import Gui.Input as Input
@@ -115,8 +115,9 @@ update msg model =
                                     { name = "Federation"
                                     , reputation = Allied
                                     }
-                                , availableCards = Set.fromList (List.range 0 (List.length Game.Events.baseEvents - 1))
+                                , availableCards = Game.Events.initialSetOfAvailableEvents
                                 , availableRegionNames = Set.singleton "carl"
+                                , availableThingNames = Game.Data.thingNames
                                 }
                             )
                             -- 428 is the crew size of the Enterprise

@@ -3,6 +3,7 @@ module Game.Events exposing
     , emptyEvent
     , firstEvent
     , getAt
+    , initialSetOfAvailableEvents
     , randomEvent
     )
 
@@ -10,10 +11,12 @@ import Game.Crew as Crew exposing (Alignment(..), Crew)
 import Game.Data exposing (Applyable(..), Event(..), Game)
 import Game.Item exposing (Item(..))
 import List.Extra
+import List.NonEmpty
 import Random exposing (Generator)
 import Random.Bool
 import Random.List
-import Set
+import Random.List.Extra
+import Set exposing (Set)
 
 
 baseEvents : List (Game -> Generator ( Event, Game ))
@@ -185,92 +188,106 @@ baseEvents =
             , gameState
             )
     , \gameState ->
-        Random.constant
-            ( Event
-                { id = "Planet Korgall"
-                , description = \_ -> "You make stop at planet Korgall for supplies."
-                , actions =
-                    [ Applyable
-                        { label = "Resupply and Continue"
-                        , apply =
-                            \game ->
-                                let
-                                    hasGreenSphere : Bool
-                                    hasGreenSphere =
-                                        List.Extra.find
-                                            (\item ->
-                                                case item of
-                                                    GreenSphere ->
-                                                        True
+        Random.map
+            (\( ( name, pluralName ), remainingNames ) ->
+                ( Event
+                    { id = "Planet " ++ name
+                    , description = \_ -> "You make stop at planet " ++ name ++ " for supplies."
+                    , actions =
+                        [ Applyable
+                            { label = "Resupply and Continue"
+                            , apply =
+                                \game ->
+                                    let
+                                        hasGreenSphere : Bool
+                                        hasGreenSphere =
+                                            List.Extra.find
+                                                (\item ->
+                                                    case item of
+                                                        GreenSphere ->
+                                                            True
 
-                                                    _ ->
-                                                        False
+                                                        _ ->
+                                                            False
+                                                )
+                                                game.rareItems
+                                                |> Maybe.map (\_ -> True)
+                                                |> Maybe.withDefault False
+                                    in
+                                    if hasGreenSphere then
+                                        Random.andThen
+                                            (\shuffledCrew ->
+                                                randomEvent
+                                                    { game
+                                                        | resultOfAction = "While restocking your ship the " ++ pluralName ++ " see the green sphere relic and react in rage, attacking your crew. You manage to make it out of there but lose 2 crew members. You later learn that this device was a weapon built to destroy the " ++ pluralName ++ " and they thought you were attempting to kill them."
+                                                        , crew =
+                                                            List.drop 2 shuffledCrew
+                                                                |> List.map (Crew.modifyMoral -3 ChaoticEvil)
+                                                        , rareItems =
+                                                            List.filter
+                                                                (\item ->
+                                                                    case item of
+                                                                        GreenSphere ->
+                                                                            False
+
+                                                                        _ ->
+                                                                            True
+                                                                )
+                                                                game.rareItems
+                                                    }
                                             )
-                                            game.rareItems
-                                            |> Maybe.map (\_ -> True)
-                                            |> Maybe.withDefault False
-                                in
-                                if hasGreenSphere then
-                                    Random.andThen
-                                        (\shuffledCrew ->
-                                            randomEvent
-                                                { game
-                                                    | resultOfAction = "While restocking your ship the Korgallians see the green sphere relic and react in rage, attacking your crew. You manage to make it out of there but lose 2 crew members. You later learn that this device was a weapon built to destroy the Korgallians and they thought you were attempting to kill them."
-                                                    , crew =
-                                                        List.drop 2 shuffledCrew
-                                                            |> List.map (Crew.modifyMoral -3 ChaoticEvil)
-                                                    , rareItems =
-                                                        List.filter
-                                                            (\item ->
-                                                                case item of
-                                                                    GreenSphere ->
-                                                                        False
+                                            (Random.List.shuffle game.crew)
 
-                                                                    _ ->
-                                                                        True
-                                                            )
-                                                            game.rareItems
-                                                }
-                                        )
-                                        (Random.List.shuffle game.crew)
-
-                                else
-                                    randomEvent { game | resultOfAction = "You restock the ship and continue on your journey." }
-                        }
-                    ]
-                }
-            , gameState
+                                    else
+                                        randomEvent { game | resultOfAction = "You restock the ship and continue on your journey." }
+                            }
+                        ]
+                    }
+                , { gameState
+                    | availableThingNames =
+                        List.NonEmpty.fromList remainingNames
+                            |> Maybe.withDefault Game.Data.thingNames
+                  }
+                )
             )
+            (Random.List.Extra.pick gameState.availableThingNames)
     , \gameState ->
-        Random.constant
-            ( Event
-                { id = "Floporian Nebula"
-                , description = \_ -> "You pass near the unchated Floporian Nebula."
-                , actions =
-                    [ Applyable
-                        { label = "Explore the Nebula"
-                        , apply =
-                            \game ->
-                                Random.andThen
-                                    (\event ->
-                                        setEvent event (setResult "You enter into the Floporian Nebula, what will you find?" game)
-                                    )
-                                    (Random.weighted
-                                        ( 33, nebulaPirate )
-                                        [ ( 33, nebulaPlanet )
-                                        , ( 33, nebulaAnomaly )
-                                        ]
-                                    )
-                        }
-                    , Applyable
-                        { label = "Ignore the Nebula"
-                        , apply =
-                            setResult "You continue on your way, ignoring the nebula." >> randomEvent
-                        }
-                    ]
-                }
-            , gameState
+        Random.map
+            (\( ( name, _ ), remainingNames ) ->
+                ( Event
+                    { id = name ++ " Nebula"
+                    , description = \_ -> "You pass near the unchated " ++ name ++ " Nebula."
+                    , actions =
+                        [ Applyable
+                            { label = "Explore the Nebula"
+                            , apply =
+                                \game ->
+                                    Random.andThen
+                                        (\event ->
+                                            setEvent event (setResult ("You enter into the " ++ name ++ " Nebula, what will you find?") game)
+                                        )
+                                        (Random.weighted
+                                            ( 34, nebulaPirate )
+                                            [ ( 33, nebulaPlanet )
+                                            , ( 33, nebulaAnomaly )
+                                            ]
+                                        )
+                            }
+                        , Applyable
+                            { label = "Ignore the Nebula"
+                            , apply =
+                                setResult "You continue on your way, ignoring the nebula." >> randomEvent
+                            }
+                        ]
+                    }
+                , { gameState
+                    | availableThingNames =
+                        List.NonEmpty.fromList remainingNames
+                            |> Maybe.withDefault Game.Data.thingNames
+                  }
+                )
             )
+            (Random.List.Extra.pick gameState.availableThingNames)
     ]
 
 
@@ -666,8 +683,20 @@ randomEvent game =
         |> Random.andThen
             (\( toPick, remaining ) ->
                 let
+                    remainingAvailableEVents : Set Int
+                    remainingAvailableEVents =
+                        Set.fromList remaining
+
+                    g : Game
                     g =
-                        { game | availableCards = Set.fromList remaining }
+                        { game
+                            | availableCards =
+                                if Set.isEmpty remainingAvailableEVents then
+                                    initialSetOfAvailableEvents
+
+                                else
+                                    remainingAvailableEVents
+                        }
                 in
                 toPick
                     |> Maybe.andThen (\i -> getAt i baseEvents)
@@ -699,7 +728,7 @@ emptyEvent : Event
 emptyEvent =
     Event
         { id = ""
-        , description = \_ -> ""
+        , description = \_ -> "hodor"
         , actions = []
         }
 
@@ -718,3 +747,8 @@ firstEvent =
                 }
             ]
         }
+
+
+initialSetOfAvailableEvents : Set Int
+initialSetOfAvailableEvents =
+    Set.fromList (List.range 0 (List.length baseEvents - 1))

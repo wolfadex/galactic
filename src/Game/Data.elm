@@ -23,6 +23,7 @@ type alias Game =
     , region : Region
     , availableCards : Set Int
     , availableRegionNames : Set String
+    , availableThingNames : NonEmptyList ( String, String )
     }
 
 
@@ -81,10 +82,11 @@ regionsNames =
     )
 
 
-thingNames : NonEmptyList String
+thingNames : NonEmptyList ( String, String )
 thingNames =
-    ( "Florrpion"
-    , [ "Genojian"
-      , "Kalespiel"
+    ( ( "Floporian", "Floporians" )
+    , [ ( "Genojian", "Genojians" )
+      , ( "Kalespiel", "Kalespielians" )
+      , ( "Korgall", "Korgallians" )
       ]
     )

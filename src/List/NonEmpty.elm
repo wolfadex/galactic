@@ -1,5 +1,6 @@
 module List.NonEmpty exposing
     ( NonEmptyList
+    , fromList
     , getAt
     , length
     , singleton
@@ -19,6 +20,16 @@ singleton a =
 toList : NonEmptyList a -> List a
 toList ( first, rest ) =
     first :: rest
+
+
+fromList : List a -> Maybe (NonEmptyList a)
+fromList xs =
+    case xs of
+        [] ->
+            Nothing
+
+        first :: rest ->
+            Just ( first, rest )
 
 
 length : NonEmptyList a -> Int
