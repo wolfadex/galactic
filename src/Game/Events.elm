@@ -8,12 +8,13 @@ module Game.Events exposing
     )
 
 import Game.Crew as Crew exposing (Alignment(..), Crew)
-import Game.Data exposing (Applyable(..), Event(..), Game)
+import Game.Data exposing (Applyable(..), Event(..), Game, Reputation)
 import Game.Item exposing (Item(..))
 import List.Extra
 import List.NonEmpty
 import Random exposing (Generator)
 import Random.Bool
+import Random.Extra
 import Random.List
 import Random.List.Extra
 import Set exposing (Set)
@@ -683,21 +684,43 @@ randomEvent game =
         |> Random.andThen
             (\( toPick, remaining ) ->
                 let
-                    remainingAvailableEVents : Set Int
-                    remainingAvailableEVents =
+                    remainingAvailableEvents : Set Int
+                    remainingAvailableEvents =
                         Set.fromList remaining
 
-                    g : Game
-                    g =
-                        { game
-                            | availableCards =
-                                if Set.isEmpty remainingAvailableEVents then
-                                    initialSetOfAvailableEvents
+                    actualRemaining : Set Int
+                    actualRemaining =
+                        if Set.isEmpty remainingAvailableEvents then
+                            initialSetOfAvailableEvents
 
-                                else
-                                    remainingAvailableEVents
-                        }
+                        else
+                            remainingAvailableEvents
                 in
+                Random.andThen
+                    (\travelToNewRegion ->
+                        if travelToNewRegion then
+                            Random.map2
+                                (\( name, remainingNames ) reputation ->
+                                    ( toPick
+                                    , { game
+                                        | region = { name = name, reputation = reputation }
+                                        , availableRegionNames =
+                                            List.NonEmpty.fromList remainingNames
+                                                |> Maybe.withDefault Game.Data.regionsNames
+                                        , availableCards = actualRemaining
+                                      }
+                                    )
+                                )
+                                (Random.List.Extra.pick game.availableRegionNames)
+                                (Random.List.Extra.weighted Game.Data.reputationsWeighted)
+
+                        else
+                            Random.constant ( toPick, { game | availableCards = actualRemaining } )
+                    )
+                    (Random.Extra.oneIn (List.length remaining * 2))
+            )
+        |> Random.andThen
+            (\( toPick, g ) ->
                 toPick
                     |> Maybe.andThen (\i -> getAt i baseEvents)
                     |> Maybe.map (\event -> event g)

@@ -75,9 +75,10 @@ reputationsWeighted =
 
 regionsNames : NonEmptyList String
 regionsNames =
-    ( "Carl"
-    , [ "Carla"
-      , "Carly"
+    ( "Sector 4"
+    , [ "Parhelion"
+      , "Pantalaimon"
+      , "Giskard"
       ]
     )
 

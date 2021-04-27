@@ -116,7 +116,7 @@ update msg model =
                                     , reputation = Allied
                                     }
                                 , availableCards = Game.Events.initialSetOfAvailableEvents
-                                , availableRegionNames = Set.singleton "carl"
+                                , availableRegionNames = Game.Data.regionsNames
                                 , availableThingNames = Game.Data.thingNames
                                 }
                             )

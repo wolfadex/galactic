@@ -1,4 +1,4 @@
-module Random.List.Extra exposing (pick)
+module Random.List.Extra exposing (pick, weighted)
 
 import List.NonEmpty exposing (NonEmptyList)
 import Random exposing (Generator)
@@ -24,3 +24,8 @@ getAt index list =
     list
         |> List.drop index
         |> List.head
+
+
+weighted : NonEmptyList ( Float, a ) -> Generator a
+weighted ( first, rest ) =
+    Random.weighted first rest
