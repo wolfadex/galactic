@@ -4,11 +4,12 @@ module Game.Data exposing
     , Game
     , Region
     , Reputation(..)
+    , alienNames
     , colors
+    , properNouns
     , regionsNames
     , reputationsWeighted
     , shapes3d
-    , thingNames
     )
 
 import Game.Crew exposing (Crew)
@@ -25,7 +26,8 @@ type alias Game =
     , region : Region
     , availableCards : Set Int
     , availableRegionNames : NonEmptyList String
-    , availableThingNames : NonEmptyList ( String, String )
+    , availableProperNouns : NonEmptyList ( String, String )
+    , availableAlienNames : NonEmptyList String
     }
 
 
@@ -39,7 +41,7 @@ type Applyable
 type Event
     = Event
         { id : String
-        , description : Game -> String
+        , description : String
         , actions : List Applyable
         }
 
@@ -85,12 +87,24 @@ regionsNames =
     )
 
 
-thingNames : NonEmptyList ( String, String )
-thingNames =
+properNouns : NonEmptyList ( String, String )
+properNouns =
     ( ( "Floporian", "Floporians" )
     , [ ( "Genojian", "Genojians" )
       , ( "Kalespiel", "Kalespielians" )
       , ( "Korgall", "Korgallians" )
+      ]
+    )
+
+
+alienNames : NonEmptyList String
+alienNames =
+    ( "Vongopian"
+    , [ "Shluefell"
+      , "Quarnian"
+      , "Tslaful"
+      , "Peuneeer"
+      , "Rumfele"
       ]
     )
 

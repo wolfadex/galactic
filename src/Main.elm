@@ -115,7 +115,8 @@ update msg model =
                                     }
                                 , availableCards = Game.Events.initialSetOfAvailableEvents
                                 , availableRegionNames = Game.Data.regionsNames
-                                , availableThingNames = Game.Data.thingNames
+                                , availableProperNouns = Game.Data.properNouns
+                                , availableAlienNames = Game.Data.alienNames
                                 }
                             )
                             -- 428 is the crew size of the Enterprise
@@ -403,13 +404,13 @@ viewEvents game =
             [ paragraph
                 [ padding 16 ]
                 [ text game.resultOfAction ]
-            , viewEvent game game.event
+            , viewEvent game.event
             ]
         )
 
 
-viewEvent : Game -> Event -> Element Msg
-viewEvent game (Event event) =
+viewEvent : Event -> Element Msg
+viewEvent (Event event) =
     el
         [ width fill
         , Border.solid
@@ -436,9 +437,7 @@ viewEvent game (Event event) =
                 }
             , width fill
             ]
-            [ paragraph
-                []
-                [ text (event.description game) ]
+            [ paragraph [] [ text event.description ]
             , event.actions
                 |> List.map viewAction
                 |> wrappedRow [ spacing 16 ]

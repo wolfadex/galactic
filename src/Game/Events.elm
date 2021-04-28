@@ -22,20 +22,19 @@ baseEvents =
             ( Event
                 { id = "Viral Outbreak"
                 , description =
-                    \{ crew } ->
-                        let
-                            crewCount : Int
-                            crewCount =
-                                List.length crew
-                        in
-                        "A viral outbreak is spreading rapidly through the ship. 30% ("
-                            ++ (((crewCount |> toFloat) * 0.3)
-                                    |> floor
-                                    |> String.fromInt
-                               )
-                            ++ " of "
-                            ++ String.fromInt crewCount
-                            ++ ") of the crew is infected and the virus is killing 25% of those infected."
+                    let
+                        crewCount : Int
+                        crewCount =
+                            List.length gameState.crew
+                    in
+                    "A viral outbreak is spreading rapidly through the ship. 30% ("
+                        ++ (((crewCount |> toFloat) * 0.3)
+                                |> floor
+                                |> String.fromInt
+                           )
+                        ++ " of "
+                        ++ String.fromInt crewCount
+                        ++ ") of the crew is infected and the virus is killing 25% of those infected."
                 , actions =
                     [ Applyable
                         { label = "Do Nothing"
@@ -122,7 +121,7 @@ baseEvents =
         Random.constant
             ( Event
                 { id = "pirates of " ++ gameState.region.name
-                , description = \_ -> "A ship of " ++ gameState.region.name ++ " pirates appears from behind a moon. Before you can react they've come along side your ship and are preparing to board."
+                , description = "A ship of " ++ gameState.region.name ++ " pirates appears from behind a moon. Before you can react they've come along side your ship and are preparing to board."
                 , actions =
                     [ Applyable
                         { label = "Challenge the Pirates"
@@ -167,7 +166,7 @@ baseEvents =
         Random.constant
             ( Event
                 { id = "Strange Planet"
-                , description = \_ -> "After traveling for some time you come across a lush, habitible planet."
+                , description = "After traveling for some time you come across a lush, habitible planet."
                 , actions =
                     [ Applyable
                         { label = "Pass it By"
@@ -188,7 +187,7 @@ baseEvents =
             (\( ( name, pluralName ), remainingNames ) ->
                 ( Event
                     { id = "Planet " ++ name
-                    , description = \_ -> "You make stop at planet " ++ name ++ " for supplies."
+                    , description = "You make stop at planet " ++ name ++ " for supplies."
                     , actions =
                         [ Applyable
                             { label = "Resupply and Continue"
@@ -220,19 +219,19 @@ baseEvents =
                         ]
                     }
                 , { gameState
-                    | availableThingNames =
+                    | availableProperNouns =
                         List.NonEmpty.fromList remainingNames
-                            |> Maybe.withDefault Game.Data.thingNames
+                            |> Maybe.withDefault Game.Data.properNouns
                   }
                 )
             )
-            (Random.List.Extra.pick gameState.availableThingNames)
+            (Random.List.Extra.pick gameState.availableProperNouns)
     , \gameState ->
         Random.map
             (\( ( name, _ ), remainingNames ) ->
                 ( Event
                     { id = name ++ " Nebula"
-                    , description = \_ -> "You pass near the unchated " ++ name ++ " Nebula."
+                    , description = "You pass near the unchated " ++ name ++ " Nebula."
                     , actions =
                         [ Applyable
                             { label = "Explore the Nebula"
@@ -257,21 +256,80 @@ baseEvents =
                         ]
                     }
                 , { gameState
-                    | availableThingNames =
+                    | availableProperNouns =
                         List.NonEmpty.fromList remainingNames
-                            |> Maybe.withDefault Game.Data.thingNames
+                            |> Maybe.withDefault Game.Data.properNouns
                   }
                 )
             )
-            (Random.List.Extra.pick gameState.availableThingNames)
+            (Random.List.Extra.pick gameState.availableProperNouns)
+    , \gameState ->
+        Random.map
+            (\( names, remainingNames ) ->
+                ( Event
+                    { id = "energy being"
+                    , description = "Your ship travels through what looks like a gaseous cloud. Suddenly a ball of energy appears on the bridge of the ship."
+                    , actions =
+                        [ Applyable
+                            { label = "Shoot It"
+                            , apply =
+                                \game ->
+                                    Random.andThen
+                                        (\shuffledCrew ->
+                                            randomEvent
+                                                { game
+                                                    | resultOfAction = "You pull out your weapon and fire at the ball of energy. Your weapon does noting. The ball of energy just absords the blast. In the blink of an eye it jumps between a few of your crew, zapping and killing them, before disappearing completely."
+                                                    , crew = List.drop 3 shuffledCrew
+                                                }
+                                        )
+                                        (Random.List.shuffle game.crew)
+                            }
+                        , Applyable
+                            { label = "Try to Communicate"
+                            , apply =
+                                setResult "You slowly approach the ball and try to talk with it."
+                                    >> setEvent (talkToEnergyAlien names)
+                            }
+                        ]
+                    }
+                , { gameState
+                    | availableAlienNames =
+                        List.NonEmpty.fromList remainingNames
+                            |> Maybe.withDefault Game.Data.alienNames
+                  }
+                )
+            )
+            (Random.List.Extra.pick gameState.availableAlienNames)
     ]
+
+
+talkToEnergyAlien : String -> Event
+talkToEnergyAlien name =
+    Event
+        { id = "talk to energy being"
+        , description = "After a pause the ball of energy responds in a voice that sounds like crackling air. It introduces itself as " ++ name ++ ". Explaining that they're just here to experiment on you."
+        , actions =
+            [ Applyable
+                { label = "Demand They Leave"
+                , apply =
+                    setResult ("As quickly as they appeard " ++ name ++ " disappears.")
+                        >> randomEvent
+                }
+            , Applyable
+                { label = "Offer to Help"
+                , apply =
+                    setResult (name ++ " loves your enthusiasm. It turns out that all they wanted was to find out how friendly you were. With this they quickly depart.")
+                        >> randomEvent
+                }
+            ]
+        }
 
 
 nebulaPirate : Event
 nebulaPirate =
     Event
         { id = "Nebula Pirate"
-        , description = \_ -> "As soon as you enter the nebula a pirate ship appears behind you."
+        , description = "As soon as you enter the nebula a pirate ship appears behind you."
         , actions =
             [ Applyable
                 { label = "Attempt to Flee"
@@ -311,7 +369,7 @@ nebulaPlanet : Event
 nebulaPlanet =
     Event
         { id = "Nebula Planet"
-        , description = \_ -> "After traveling through the nebula for what feels like forever you come across a strange looking planet. It seems habitable, but looks nothing like any habitble planet you've ever seen before."
+        , description = "After traveling through the nebula for what feels like forever you come across a strange looking planet. It seems habitable, but looks nothing like any habitble planet you've ever seen before."
         , actions =
             [ Applyable
                 { label = "Explore the Planet"
@@ -333,13 +391,23 @@ exploreNebulaPlanet : Event
 exploreNebulaPlanet =
     Event
         { id = "Explore Nebula Planet"
-        , description = \_ -> "The planet is covered in tree like things that unlike plants seem to move ever so slowly. There's also a plethora of other creatures of various shapes and size, all moving incrediblly slowly."
+        , description = "The planet is covered in tree like things that unlike plants seem to move ever so slowly. There's also a plethora of other creatures of various shapes and size, all moving incrediblly slowly."
         , actions =
             [ Applyable
                 { label = "Delve into the Forest"
                 , apply =
-                    setResult "After hours of hiking you come across a small home that all of the creatures seem to move around. Inside is an old woman."
-                        >> setEvent oldWomanInNebula
+                    \game ->
+                        Random.andThen
+                            (\( name, remainingNames ) ->
+                                setEvent (oldWomanInNebula name)
+                                    { game
+                                        | resultOfAction = "After hours of hiking you come across a small home that all of the creatures seem to move around. Inside is an old woman."
+                                        , availableAlienNames =
+                                            List.NonEmpty.fromList remainingNames
+                                                |> Maybe.withDefault Game.Data.alienNames
+                                    }
+                            )
+                            (Random.List.Extra.pick game.availableAlienNames)
                 }
             , Applyable
                 { label = "Leave the Planet"
@@ -351,11 +419,11 @@ exploreNebulaPlanet =
         }
 
 
-oldWomanInNebula : Event
-oldWomanInNebula =
+oldWomanInNebula : String -> Event
+oldWomanInNebula name =
     Event
         { id = "Old Woman in Nebula"
-        , description = \_ -> "The old woman invites you in. She says it's been many years since she's had visitors. She asks if you'd like to stay for dinner?"
+        , description = "The old woman invites you in, intorducing herself as " ++ name ++ ". She says it's been many years since she's had visitors. She asks if you'd like to stay for dinner?"
         , actions =
             [ Applyable
                 { label = "Stay for Dinner"
@@ -363,14 +431,18 @@ oldWomanInNebula =
                     \game ->
                         randomEvent
                             { game
-                                | resultOfAction = "You accept the offer of dinner. After her many stories the old woman gives you a parting gift. A small puzzle box. You take it graciously, then return to your ship and through the nebula."
+                                | resultOfAction = "You accept the offer of dinner. After her many stories, " ++ name ++ " gives you a parting gift. A small puzzle box. You take it graciously, then return to your ship and through the nebula."
                                 , rareItems = "puzzle box" :: game.rareItems
                             }
                 }
             , Applyable
                 { label = "Decline Dinner"
                 , apply =
-                    setResult "You let her know that you must be on your way, heading back to your ship and out fo the nebula."
+                    setResult
+                        ("You let "
+                            ++ name
+                            ++ " know that you must be on your way, heading back to your ship and out of the nebula."
+                        )
                         >> randomEvent
                 }
             ]
@@ -381,7 +453,7 @@ nebulaAnomaly : Event
 nebulaAnomaly =
     Event
         { id = "Nebula Anomaly"
-        , description = \_ -> "As you venture through the nebula, your crew starts to behave strangely. More and more of them start acting like children. Slowly regressing emotionally."
+        , description = "As you venture through the nebula, your crew starts to behave strangely. More and more of them start acting like children. Slowly regressing emotionally."
         , actions =
             [ Applyable
                 { label = "Continue Forward"
@@ -404,7 +476,7 @@ pushThroughAnamoly timesPushedThrough =
     if timesPushedThrough == 3 then
         Event
             { id = "Hiiden in the Nebula"
-            , description = \_ -> "After what seems like seems like forever you find the ship in a void in the nebula. At the center is an alien looking vessel."
+            , description = "After what seems like seems like forever you find the ship in a void in the nebula. At the center is an alien looking vessel."
             , actions =
                 [ Applyable
                     { label = "Board the Vessel"
@@ -436,18 +508,17 @@ pushThroughAnamoly timesPushedThrough =
         Event
             { id = "Push Through Nebula Anomaly"
             , description =
-                \_ ->
-                    if timesPushedThrough == 0 then
-                        "Pushing thorugh the nebula takes a toll on the crew. Many have now reverted to being infants and are unable to do their duty. You still have no clue as to the cause."
+                if timesPushedThrough == 0 then
+                    "Pushing thorugh the nebula takes a toll on the crew. Many have now reverted to being infants and are unable to do their duty. You still have no clue as to the cause."
 
-                    else if timesPushedThrough == 1 then
-                        "You continue onwards, straining the limits of the crew. Even more have now reverted to being infants and are unable to do their duty. You still have no clue as to the cause."
+                else if timesPushedThrough == 1 then
+                    "You continue onwards, straining the limits of the crew. Even more have now reverted to being infants and are unable to do their duty. You still have no clue as to the cause."
 
-                    else if timesPushedThrough == 2 then
-                        "The crew is starting to get unruly from the strain. Very many are now unable to do their duty. You still have no clue as to the cause."
+                else if timesPushedThrough == 2 then
+                    "The crew is starting to get unruly from the strain. Very many are now unable to do their duty. You still have no clue as to the cause."
 
-                    else
-                        "You're not sure if the vrew can go any furthur, do you dare go on? You still have no clue as to the cause."
+                else
+                    "You're not sure if the vrew can go any furthur, do you dare go on? You still have no clue as to the cause."
             , actions =
                 [ Applyable
                     { label = "Continue Forward"
@@ -480,7 +551,7 @@ boardAlienVesselInNebula : Event
 boardAlienVesselInNebula =
     Event
         { id = "Board Alien Nebula Vessel"
-        , description = \_ -> "You take a small group into the alien vessel. After finding their way through various hallways they find a vault of sorts. Inside the valut is a bizzare object that seems to fade in and out of existence, changing shape as it does."
+        , description = "You take a small group into the alien vessel. After finding their way through various hallways they find a vault of sorts. Inside the valut is a bizzare object that seems to fade in and out of existence, changing shape as it does."
         , actions =
             [ Applyable
                 { label = "Attempt to take the Object"
@@ -510,7 +581,7 @@ exploreStrangePlanet : Event
 exploreStrangePlanet =
     Event
         { id = "Strange Planet Surface"
-        , description = \_ -> "During your exploration you find some ancient ruins."
+        , description = "During your exploration you find some ancient ruins."
         , actions =
             [ Applyable
                 { label = "Investigate the Ruins"
@@ -538,14 +609,13 @@ exploreRuins =
             Event
                 { id = "Inside the Ruins"
                 , description =
-                    \_ ->
-                        "You come across a small room with 3 pedestals. On top of each you see 3 ancient relics. The one of the left is "
-                            ++ relic1
-                            ++ ". The one in the middle is a "
-                            ++ relic2
-                            ++ ". The last is a "
-                            ++ relic3
-                            ++ "."
+                    "You come across a small room with 3 pedestals. On top of each you see 3 ancient relics. The one of the left is "
+                        ++ relic1
+                        ++ ". The one in the middle is a "
+                        ++ relic2
+                        ++ ". The last is a "
+                        ++ relic3
+                        ++ "."
                 , actions =
                     [ Applyable
                         { label = "Leave the Relics"
@@ -604,7 +674,7 @@ pirateBattle =
     \gameState ->
         ( Event
             { id = "Engaged with Pirates"
-            , description = \_ -> "The battle with the pirates is rough but you come out on top. You lose some of your crew but the pirate loses are much greater. How will you deal with the captives?"
+            , description = "The battle with the pirates is rough but you come out on top. You lose some of your crew but the pirate loses are much greater. How will you deal with the captives?"
             , actions =
                 [ Applyable
                     { label = "Toss Them Into Space"
@@ -757,7 +827,7 @@ emptyEvent : Event
 emptyEvent =
     Event
         { id = ""
-        , description = \_ -> "hodor"
+        , description = "hodor"
         , actions = []
         }
 
@@ -766,7 +836,7 @@ firstEvent : Event
 firstEvent =
     Event
         { id = "Launch Ship"
-        , description = \_ -> "Begin your voyage"
+        , description = "Begin your voyage"
         , actions =
             [ Applyable
                 { label = "Launch"
